@@ -1,0 +1,15 @@
+version: '3'
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+  web:
+    build: .
+    depends_on:
+      - database
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    command: "cargo watch -x run"
