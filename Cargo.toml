@@ -1,0 +1,6 @@
+[package]
+name = "fake-news-api"
+version = "0.1.0"
+authors = ["Rogerio Chaves <rogeriocfj@gmail.com>"]
+
+[dependencies]
