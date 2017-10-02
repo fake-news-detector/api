@@ -1,0 +1,4 @@
+CREATE TABLE links (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR NOT NULL
+)
