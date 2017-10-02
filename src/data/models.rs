@@ -1,7 +1,7 @@
 extern crate rocket_contrib;
 extern crate serde;
 extern crate serde_json;
-use schema::{categories, votes, links};
+use data::schema::{categories, votes, links};
 
 #[derive(Serialize, Deserialize)]
 #[derive(Identifiable, Queryable)]
