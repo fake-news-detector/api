@@ -22,6 +22,7 @@ fn main() {
                 endpoints::healthcheck::healthcheck,
                 endpoints::categories::get_categories,
                 endpoints::votes::get_votes,
+                endpoints::votes::post_vote,
                 endpoints::index::index,
             ],
         )

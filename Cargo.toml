@@ -7,7 +7,7 @@ authors = ["Rogerio Chaves <rogeriocfj@gmail.com>"]
 rocket = "0.3.3"
 rocket_codegen = "0.3.3"
 rocket_contrib = "0.3.3"
-serde = "*"
+serde = "1.0.15"
 serde_derive = "1.0.15"
 serde_json = "1.0.3"
 diesel = { version = "0.16.0", features = ["postgres"] }
