@@ -4,4 +4,6 @@ CREATE TABLE votes (
   uuid VARCHAR NOT NULL,
   ip VARCHAR NOT NULL,
   PRIMARY KEY (link_id, category_id, uuid)
-)
+);
+
+INSERT INTO votes(link_id, category_id, uuid, ip) VALUES (1, 5, '123', '0.0.0.0');

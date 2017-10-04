@@ -10,6 +10,7 @@ extern crate diesel_codegen;
 extern crate serde_derive;
 extern crate rocket;
 extern crate rocket_contrib;
+use rocket_contrib::Template;
 pub mod data;
 pub mod endpoints;
 
@@ -26,5 +27,6 @@ fn main() {
                 endpoints::index::index,
             ],
         )
+        .attach(Template::fairing())
         .launch();
 }
