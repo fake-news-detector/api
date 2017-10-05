@@ -15,7 +15,9 @@ type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 /// Initializes a database pool.
 pub fn init_pool() -> Pool {
-    let database_url = env::var("DATABASE_URL").unwrap();
+    let database_url = env::var("DATABASE_URL").unwrap_or(String::from(
+        "postgres://postgres:password@localhost:5432/fakenews",
+    ));
 
     let config = r2d2::Config::default();
     let manager = ConnectionManager::<PgConnection>::new(database_url);

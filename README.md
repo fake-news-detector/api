@@ -26,3 +26,8 @@ Then start the app:
 ```
 cargo watch -x run
 ```
+
+
+## Deploy
+
+Read more about deploying docker with heroku [on the oficial docs](https://devcenter.heroku.com/articles/container-registry-and-runtime).
