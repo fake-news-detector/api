@@ -21,6 +21,12 @@ Also, you will need to have a postgres database running, if you don't, you can r
 docker-compose up database
 ```
 
+Expose the database url:
+
+```
+export DATABASE_URL="postgres://postgres:password@localhost:5432/fakenews"
+```
+
 Then start the app:
 
 ```
