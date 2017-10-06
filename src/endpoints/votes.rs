@@ -9,6 +9,7 @@ use data::schema::votes::dsl::*;
 use data::models::*;
 use data::pg_pool::DbConn;
 use diesel::types::{Integer, BigInt};
+use lib::remote_ip::RemoteIp;
 
 mod types {
     #[derive(FromForm)]
@@ -59,7 +60,7 @@ struct PostVote {
 }
 
 #[post("/vote", data = "<params>")]
-fn post_vote(params: Json<PostVote>, conn: DbConn) -> QueryResult<Json<Vote>> {
+fn post_vote(params: Json<PostVote>, conn: DbConn, remote_ip: RemoteIp) -> QueryResult<Json<Vote>> {
     let mut link = links.filter(url.eq(&params.url)).first::<Link>(&*conn);
     if link.is_err() {
         let new_link: NewLink = NewLink {
@@ -73,7 +74,7 @@ fn post_vote(params: Json<PostVote>, conn: DbConn) -> QueryResult<Json<Vote>> {
             link_id: l.id,
             category_id: params.category_id,
             uuid: &params.uuid,
-            ip: "0.0.0.0",
+            ip: &remote_ip.ip,
         };
         diesel::insert(&new_vote).into(votes).get_result(&*conn)
     }).map(Json)

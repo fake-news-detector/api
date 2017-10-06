@@ -13,6 +13,7 @@ extern crate rocket_contrib;
 use rocket_contrib::Template;
 pub mod data;
 pub mod endpoints;
+pub mod lib;
 
 fn main() {
     rocket::ignite()
