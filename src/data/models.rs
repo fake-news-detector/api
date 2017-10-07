@@ -30,11 +30,11 @@ pub struct NewLink<'a> {
 #[derive(Serialize, Deserialize)]
 #[derive(Identifiable, Queryable, Associations)]
 #[belongs_to(Link, Category)]
-#[primary_key(link_id, category_id, uuid)]
+#[primary_key(link_id, uuid)]
 pub struct Vote {
     pub link_id: i32,
-    pub category_id: i32,
     pub uuid: String,
+    pub category_id: i32,
     pub ip: String,
 }
 
@@ -42,7 +42,7 @@ pub struct Vote {
 #[table_name = "votes"]
 pub struct NewVote<'a> {
     pub link_id: i32,
-    pub category_id: i32,
     pub uuid: &'a str,
+    pub category_id: i32,
     pub ip: &'a str,
 }

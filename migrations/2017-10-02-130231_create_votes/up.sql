@@ -1,9 +1,9 @@
 CREATE TABLE votes (
   link_id INTEGER REFERENCES links(id),
-  category_id INTEGER REFERENCES categories(id),
   uuid VARCHAR NOT NULL,
+  category_id INTEGER REFERENCES categories(id),
   ip VARCHAR NOT NULL,
-  PRIMARY KEY (link_id, category_id, uuid)
+  PRIMARY KEY (link_id, uuid)
 );
 
-INSERT INTO votes(link_id, category_id, uuid, ip) VALUES (1, 5, '123', '0.0.0.0');
+INSERT INTO votes(link_id, uuid, category_id, ip) VALUES (1, '123', 5, '0.0.0.0');

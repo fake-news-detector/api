@@ -16,10 +16,10 @@ table! {
 }
 
 table! {
-    votes (link_id, category_id, uuid) {
+    votes (link_id, uuid) {
         link_id -> Integer,
-        category_id -> Integer,
         uuid -> Text,
+        category_id -> Integer,
         ip -> Text,
     }
 }

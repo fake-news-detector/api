@@ -91,7 +91,7 @@ fn post_vote(
         Ok(vote) => Ok(vote),
         Err(DatabaseError(UniqueViolation, _)) => Err(status::Custom(
             Status::BadRequest,
-            String::from("Link already flaged by this user"),
+            String::from("Link already flagged by this user"),
         )),
         Err(_) => Err(status::Custom(
             Status::InternalServerError,
