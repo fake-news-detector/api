@@ -20,7 +20,7 @@ mod types {
     pub struct GetVotesParams {
         pub url: String,
     }
-    #[derive(Serialize, Deserialize)]
+    #[derive(Queryable, Serialize, Deserialize)]
     pub struct VotesCount {
         pub category_id: i32,
         pub count: i64,
@@ -37,19 +37,7 @@ fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<Vec<Votes
                 "SELECT category_id, count(*) FROM votes WHERE link_id = {} GROUP BY category_id",
                 link.id
             ));
-            let votes_count = query.load::<(i32, i64)>(&*conn);
-            votes_count
-                .map(|vec| {
-                    vec.iter()
-                        .map(|&(cid, count)| {
-                            VotesCount {
-                                category_id: cid,
-                                count: count,
-                            }
-                        })
-                        .collect()
-                })
-                .map(Json)
+            query.load::<VotesCount>(&*conn).map(Json)
         }
         Err(_) => Ok(Json(Vec::new())),
     }

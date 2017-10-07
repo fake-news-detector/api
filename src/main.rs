@@ -25,6 +25,7 @@ fn main() {
                 endpoints::categories::get_categories,
                 endpoints::votes::get_votes,
                 endpoints::votes::post_vote,
+                endpoints::links::get_all_links,
                 endpoints::index::index,
             ],
         )
