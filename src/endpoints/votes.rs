@@ -10,6 +10,10 @@ use data::models::*;
 use data::pg_pool::DbConn;
 use diesel::types::{Integer, BigInt};
 use lib::remote_ip::RemoteIp;
+use rocket::response::status;
+use rocket::http::Status;
+use diesel::result::Error::*;
+use diesel::result::DatabaseErrorKind::*;
 
 mod types {
     #[derive(FromForm)]
@@ -60,7 +64,11 @@ struct PostVote {
 }
 
 #[post("/vote", data = "<params>")]
-fn post_vote(params: Json<PostVote>, conn: DbConn, remote_ip: RemoteIp) -> QueryResult<Json<Vote>> {
+fn post_vote(
+    params: Json<PostVote>,
+    conn: DbConn,
+    remote_ip: RemoteIp,
+) -> Result<Json<Vote>, status::Custom<String>> {
     let mut link = links.filter(url.eq(&params.url)).first::<Link>(&*conn);
     if link.is_err() {
         let new_link: NewLink = NewLink {
@@ -69,7 +77,7 @@ fn post_vote(params: Json<PostVote>, conn: DbConn, remote_ip: RemoteIp) -> Query
         };
         link = diesel::insert(&new_link).into(links).get_result(&*conn)
     };
-    link.and_then(|l| {
+    let insert_query = link.and_then(|l| {
         let new_vote: NewVote = NewVote {
             link_id: l.id,
             category_id: params.category_id,
@@ -77,5 +85,17 @@ fn post_vote(params: Json<PostVote>, conn: DbConn, remote_ip: RemoteIp) -> Query
             ip: &remote_ip.ip,
         };
         diesel::insert(&new_vote).into(votes).get_result(&*conn)
-    }).map(Json)
+    }).map(Json);
+
+    match insert_query {
+        Ok(vote) => Ok(vote),
+        Err(DatabaseError(UniqueViolation, _)) => Err(status::Custom(
+            Status::BadRequest,
+            String::from("Link already flaged by this user"),
+        )),
+        Err(_) => Err(status::Custom(
+            Status::InternalServerError,
+            String::from("Internal Server Error"),
+        )),
+    }
 }
