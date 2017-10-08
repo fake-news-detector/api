@@ -10,6 +10,7 @@ extern crate diesel_codegen;
 extern crate serde_derive;
 extern crate rocket;
 extern crate rocket_contrib;
+use rocket_contrib::Template;
 
 fn main() {
     println!("I'm just here to be a placeholder for docker compilation caching");

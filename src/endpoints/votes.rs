@@ -1,6 +1,7 @@
 extern crate diesel;
 extern crate rocket;
 extern crate rocket_contrib;
+extern crate reqwest;
 use rocket_contrib::Json;
 use diesel::prelude::*;
 use diesel::expression::dsl::*;
@@ -19,27 +20,63 @@ mod types {
     #[derive(FromForm)]
     pub struct GetVotesParams {
         pub url: String,
+        pub title: String,
     }
     #[derive(Queryable, Serialize, Deserialize)]
-    pub struct VotesCount {
+    pub struct PeopleVotes {
         pub category_id: i32,
         pub count: i64,
+    }
+    #[derive(Serialize, Deserialize)]
+    pub struct RobotVotes {
+        pub category_id: i32,
+        pub chance: f32,
+    }
+    #[derive(Serialize, Deserialize)]
+    pub struct RobotAndPeopleVotes {
+        pub robot: Vec<RobotVotes>,
+        pub people: Vec<PeopleVotes>,
+    }
+    #[derive(Deserialize)]
+    pub struct RobinhoResponse {
+        pub predictions: Vec<RobotVotes>,
     }
 }
 use self::types::*;
 
 #[get("/votes?<params>")]
-fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<Vec<VotesCount>>> {
+fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<RobotAndPeopleVotes>> {
+    let mut prediction_url = reqwest::Url::parse("https://robinho.herokuapp.com/predict").unwrap();
+    prediction_url.query_pairs_mut().append_pair(
+        "title",
+        &params.title,
+    );
+
+    let robinho_response: RobinhoResponse =
+        reqwest::get(prediction_url)
+            .and_then(|mut r| r.json())
+            .unwrap_or(RobinhoResponse { predictions: Vec::new() });
+
     let link: Result<Link, diesel::result::Error> = links.filter(url.eq(&params.url)).first(&*conn);
-    match link {
+    let votes_count = match link {
         Ok(link) => {
             let query = sql::<(Integer, BigInt)>(&format!(
                 "SELECT category_id, count(*) FROM votes WHERE link_id = {} GROUP BY category_id",
                 link.id
             ));
-            query.load::<VotesCount>(&*conn).map(Json)
+            query.load::<PeopleVotes>(&*conn)
         }
-        Err(_) => Ok(Json(Vec::new())),
+        Err(_) => Ok(Vec::new()),
+    };
+
+    match votes_count {
+        Ok(people) => {
+            Ok(Json(RobotAndPeopleVotes {
+                robot: robinho_response.predictions,
+                people: people,
+            }))
+        }
+        Err(err) => Err(err),
     }
 }
 
