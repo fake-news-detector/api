@@ -1,0 +1,11 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/app
+    docker:
+      - image: htli/rust-nightly
+    steps:
+      - checkout
+      - run:
+          name: build
+          command: cargo build --release
