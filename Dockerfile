@@ -1,4 +1,4 @@
-FROM rust
+FROM rust:1.20.0
 
 RUN rustup default nightly && rustup update
 
