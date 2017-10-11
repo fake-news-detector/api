@@ -1,11 +1,23 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/app
     docker:
-      - image: htli/rust-nightly
+      - image: docker
+    working_directory: ~/app
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: build
-          command: cargo build --release
+          command: |
+            docker build --cache-from fakenewsdetector/api:latest -t fakenewsdetector/api .
+            docker login --username=$DOCKER_USER --password=$DOCKER_PASS
+            docker push fakenewsdetector/api
+      - deploy:
+          name: deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker login --username=_ --password=$HEROKU_KEY registry.heroku.com
+              docker tag fakenewsdetector/api:latest registry.heroku.com/fake-news-detector-api/web
+              docker push registry.heroku.com/fake-news-detector-api/web
+            fi
