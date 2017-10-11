@@ -8,16 +8,17 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: fetch existing image
+          command: |
+            docker login --username=_ --password=$HEROKU_KEY registry.heroku.com
+            docker pull registry.heroku.com/fake-news-detector-api/web
+      - run:
           name: build
           command: |
-            docker build --cache-from fakenewsdetector/api:latest -t fakenewsdetector/api .
-            docker login --username=$DOCKER_USER --password=$DOCKER_PASS
-            docker push fakenewsdetector/api
+            docker build --cache-from registry.heroku.com/fake-news-detector-api/web:latest -t registry.heroku.com/fake-news-detector-api/web .
       - deploy:
           name: deploy
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              docker login --username=_ --password=$HEROKU_KEY registry.heroku.com
-              docker tag fakenewsdetector/api:latest registry.heroku.com/fake-news-detector-api/web
               docker push registry.heroku.com/fake-news-detector-api/web
             fi
