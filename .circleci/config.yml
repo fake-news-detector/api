@@ -15,6 +15,9 @@ jobs:
       - run:
           name: build
           command: docker build --cache-from registry.heroku.com/fake-news-detector-api/web:latest -t registry.heroku.com/fake-news-detector-api/web .
+      - run:
+          name: test
+          command: docker run --rm registry.heroku.com/fake-news-detector-api/web cargo test
       - deploy:
           name: deploy
           command: |
