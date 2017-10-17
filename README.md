@@ -42,10 +42,14 @@ Response format:
 
 ```
 {
+  verified: null | { category_id: int },
   robot: [{ category_id: int, chance: float }],
   people: [{ category_id: int, count: int }]
 }
 ```
+
+The `verified` key is only present if the given url is listed on one of our [manually verified links](https://github.com/fake-news-detector/api/blob/master/src/data/verified_list.rs).
+When present, this value should be used over robot and people's guesses.
 
 To insert a new vote, use this call:
 
@@ -69,7 +73,17 @@ To run the project you will need to have Docker installed and run:
 docker-compose up
 ```
 
-That's it!
+That's it! Now go to `http://localhost:8000/` to check.
+
+## Tests
+
+To run the tests, with `docker-compose up` running, fire up another terminal and execute:
+
+`docker-compose exec web cargo test`
+
+If you want to run it in watch mode, use:
+
+`docker-compose exec web cargo watch -x test`
 
 ## How to run outside docker
 
@@ -93,6 +107,11 @@ Then start the app:
 cargo watch -x run
 ```
 
+To run the tests:
+
+```
+cargo watch -x test
+```
 
 ## Deploy
 
