@@ -15,6 +15,7 @@ use rocket::response::status;
 use rocket::http::Status;
 use diesel::result::Error::*;
 use diesel::result::DatabaseErrorKind::*;
+use data::verified_list;
 
 mod types {
     #[derive(FromForm)]
@@ -23,36 +24,41 @@ mod types {
         pub title: String,
     }
     #[derive(Queryable, Serialize, Deserialize)]
-    pub struct PeopleVotes {
+    pub struct PeopleVote {
         pub category_id: i32,
         pub count: i64,
     }
     #[derive(Serialize, Deserialize)]
-    pub struct RobotVotes {
+    pub struct RobotVote {
         pub category_id: i32,
         pub chance: f32,
     }
     #[derive(Serialize, Deserialize)]
-    pub struct RobotAndPeopleVotes {
-        pub robot: Vec<RobotVotes>,
-        pub people: Vec<PeopleVotes>,
+    pub struct VerifiedVote {
+        pub category_id: i32,
+    }
+    #[derive(Serialize, Deserialize)]
+    pub struct GetVotesResponse {
+        pub verified: Option<VerifiedVote>,
+        pub robot: Vec<RobotVote>,
+        pub people: Vec<PeopleVote>,
     }
     #[derive(Deserialize)]
     pub struct RobinhoResponse {
-        pub predictions: Vec<RobotVotes>,
+        pub predictions: Vec<RobotVote>,
     }
 }
 use self::types::*;
 
 #[get("/votes?<params>")]
-fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<RobotAndPeopleVotes>> {
+fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<GetVotesResponse>> {
     let mut prediction_url = reqwest::Url::parse("https://robinho.herokuapp.com/predict").unwrap();
     prediction_url.query_pairs_mut().append_pair(
         "title",
         &params.title,
     );
 
-    let robinho_response: RobinhoResponse =
+    let robinho_votes: RobinhoResponse =
         reqwest::get(prediction_url)
             .and_then(|mut r| r.json())
             .unwrap_or(RobinhoResponse { predictions: Vec::new() });
@@ -64,16 +70,20 @@ fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<RobotAndP
                 "SELECT category_id, count(*) FROM votes WHERE link_id = {} GROUP BY category_id",
                 link.id
             ));
-            query.load::<PeopleVotes>(&*conn)
+            query.load::<PeopleVote>(&*conn)
         }
         Err(_) => Ok(Vec::new()),
     };
 
+    let verified_vote =
+        verified_list::get_category(params.url).map(|cid| VerifiedVote { category_id: cid });
+
     match votes_count {
-        Ok(people) => {
-            Ok(Json(RobotAndPeopleVotes {
-                robot: robinho_response.predictions,
-                people: people,
+        Ok(people_votes) => {
+            Ok(Json(GetVotesResponse {
+                verified: verified_vote,
+                robot: robinho_votes.predictions,
+                people: people_votes,
             }))
         }
         Err(err) => Err(err),
