@@ -3,7 +3,7 @@ extern crate rocket;
 extern crate rocket_contrib;
 use rocket_contrib::Json;
 use diesel::prelude::*;
-use data::models::*;
+use data::category::Category;
 use lib::pg_pool::DbConn;
 use data::schema::categories::dsl::*;
 

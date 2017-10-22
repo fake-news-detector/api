@@ -5,7 +5,6 @@ extern crate reqwest;
 use rocket_contrib::Json;
 use diesel::prelude::*;
 use data::schema::votes::dsl::*;
-use data::models::*;
 use lib::pg_pool::DbConn;
 use lib::remote_ip::RemoteIp;
 use rocket::response::status;
