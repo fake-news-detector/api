@@ -21,15 +21,14 @@ pub struct NewLink<'a> {
     pub title: &'a str,
 }
 
-pub fn find_or_create(url_: &String, title_: &String, conn: &PgConnection) -> QueryResult<Link> {
-    let mut link = dsl::links.filter(dsl::url.eq(url_)).first::<Link>(conn);
-    if link.is_err() {
-        let new_link: NewLink = NewLink {
-            url: url_,
-            title: title_,
-        };
-        link = diesel::insert(&new_link).into(dsl::links).get_result(conn)
-    };
+pub fn find_or_create(url: &String, title: &String, conn: &PgConnection) -> QueryResult<Link> {
+    let link = dsl::links.filter(dsl::url.eq(url)).first::<Link>(conn);
 
-    link
+    link.or_else(|_| {
+        let new_link: NewLink = NewLink {
+            url: url,
+            title: title,
+        };
+        diesel::insert(&new_link).into(dsl::links).get_result(conn)
+    })
 }

@@ -7,7 +7,6 @@ use diesel::expression::dsl::*;
 use data::schema::links::dsl;
 use data::schema::votes;
 use data::link::Link;
-use lib::pg_pool::DbConn;
 use diesel::types::{Integer, BigInt};
 use data::verified_list;
 
@@ -61,9 +60,8 @@ pub fn get_robinho_prediction(title: &String) -> RobinhoResponse {
         .unwrap_or(RobinhoResponse { predictions: Vec::new() })
 }
 
-pub fn get_people_votes(url: &String, conn: DbConn) -> QueryResult<Vec<PeopleVote>> {
-    let link: Result<Link, diesel::result::Error> =
-        dsl::links.filter(dsl::url.eq(url)).first(&*conn);
+pub fn get_people_votes(url: &String, conn: &PgConnection) -> QueryResult<Vec<PeopleVote>> {
+    let link: Result<Link, diesel::result::Error> = dsl::links.filter(dsl::url.eq(url)).first(conn);
 
     match link {
         Ok(link) => {
@@ -71,7 +69,7 @@ pub fn get_people_votes(url: &String, conn: DbConn) -> QueryResult<Vec<PeopleVot
                 "SELECT category_id, count(*) FROM votes WHERE link_id = {} GROUP BY category_id",
                 link.id
             ));
-            query.load::<PeopleVote>(&*conn)
+            query.load::<PeopleVote>(conn)
         }
         Err(_) => Ok(Vec::new()),
     }
