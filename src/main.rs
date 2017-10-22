@@ -17,7 +17,7 @@ pub mod lib;
 
 fn main() {
     rocket::ignite()
-        .manage(data::pg_pool::init_pool())
+        .manage(lib::pg_pool::init_pool())
         .mount(
             "/",
             routes![

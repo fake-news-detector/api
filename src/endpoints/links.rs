@@ -4,7 +4,7 @@ extern crate rocket_contrib;
 use rocket_contrib::Json;
 use diesel::prelude::*;
 use diesel::expression::dsl::*;
-use data::pg_pool::DbConn;
+use lib::pg_pool::DbConn;
 use diesel::types::{Text, Integer, BigInt};
 
 #[derive(Queryable, Serialize, Deserialize)]

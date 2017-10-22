@@ -4,7 +4,7 @@ extern crate rocket_contrib;
 use rocket_contrib::Json;
 use diesel::prelude::*;
 use data::models::*;
-use data::pg_pool::DbConn;
+use lib::pg_pool::DbConn;
 use data::schema::categories::dsl::*;
 
 #[get("/categories")]
