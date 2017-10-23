@@ -1,0 +1,193 @@
+{
+	"info": {
+		"name": "Fake News Detector API",
+		"_postman_id": "b15e16d5-3ad8-10b8-32b1-59259291dd24",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost",
+			"description": "",
+			"item": [
+				{
+					"name": "GET /votes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8000/votes?url=http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html&title=Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"votes"
+							],
+							"query": [
+								{
+									"key": "url",
+									"value": "http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html",
+									"equals": true
+								},
+								{
+									"key": "title",
+									"value": "Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "POST /vote",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"uuid\": \"123\",\n\t\"url\": \"http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html\",\n\t\"title\": \"Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo\",\n\t\"category_id\": 4\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/vote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"vote"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET /links/all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8000/links/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"links",
+								"all"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "production",
+			"description": "",
+			"item": [
+				{
+					"name": "GET /votes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://fake-news-detector-api.herokuapp.com/votes?url=http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html&title=Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo",
+							"protocol": "http",
+							"host": [
+								"fake-news-detector-api",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"votes"
+							],
+							"query": [
+								{
+									"key": "url",
+									"value": "http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html",
+									"equals": true
+								},
+								{
+									"key": "title",
+									"value": "Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "POST /vote",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"uuid\": \"123\",\n\t\"url\": \"http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html\",\n\t\"title\": \"Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo\",\n\t\"category_id\": 4\n}"
+						},
+						"url": {
+							"raw": "http://fake-news-detector-api.herokuapp.com/vote",
+							"protocol": "http",
+							"host": [
+								"fake-news-detector-api",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"vote"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET /links/all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://fake-news-detector-api.herokuapp.com/links/all",
+							"protocol": "http",
+							"host": [
+								"fake-news-detector-api",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"links",
+								"all"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
