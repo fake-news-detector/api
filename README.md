@@ -65,54 +65,6 @@ Response format:
 
 The votes endpoints are used by the [Fake News Extension](https://github.com/fake-news-detector/extension).
 
-## How to run
+# Contributing
 
-To run the project you will need to have Docker installed and run:
-
-```
-docker-compose up
-```
-
-That's it! Now go to `http://localhost:8000/` to check.
-
-## Tests
-
-To run the tests, with `docker-compose up` running, fire up another terminal and execute:
-
-`docker-compose exec web cargo test`
-
-If you want to run it in watch mode, use:
-
-`docker-compose exec web cargo watch -x test`
-
-## How to run outside docker
-
-If you want to run the app outside docker for faster development flow, you will need to install [nightly rust](https://doc.rust-lang.org/1.2.0/book/nightly-rust.html), and [cargo watch](https://github.com/passcod/cargo-watch).
-
-Also, you will need to have a postgres database running, if you don't, you can run it with docker-compose:
-
-```
-docker-compose up database
-```
-
-Expose the database url:
-
-```
-export DATABASE_URL="postgres://postgres:password@localhost:5432/fakenews"
-```
-
-Then start the app:
-
-```
-cargo watch -x run
-```
-
-To run the tests:
-
-```
-cargo watch -x test
-```
-
-## Deploy
-
-Read more about deploying docker with heroku [on the oficial docs](https://devcenter.heroku.com/articles/container-registry-and-runtime).
+If you want to help the project, you can fork it and run on your machine, for more details, read the [CONTRIBUTING.md](https://github.com/fake-news-detector/api/blob/master/CONTRIBUTING.md) guide.
