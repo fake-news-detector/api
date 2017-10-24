@@ -13,6 +13,7 @@ use diesel::result::Error::*;
 use diesel::result::DatabaseErrorKind::*;
 use data::vote::*;
 use data::link::*;
+use extractor::extractor;
 
 #[derive(FromForm)]
 pub struct GetVotesParams {
@@ -28,6 +29,7 @@ pub struct GetVotesResponse {
 
 #[get("/votes?<params>")]
 fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<GetVotesResponse>> {
+    extractor::extract_text(String::from("https://goo.gl/d9WM3W"));
     let robinho_votes = get_robinho_prediction(&params.title);
     let people_votes = get_people_votes(&params.url, &*conn)?;
     let verified = get_verified_category(params.url);
