@@ -10,10 +10,12 @@ extern crate diesel_codegen;
 extern crate serde_derive;
 extern crate rocket;
 extern crate rocket_contrib;
+extern crate select;
 use rocket_contrib::Template;
 pub mod data;
 pub mod endpoints;
 pub mod lib;
+pub mod extractor;
 
 fn main() {
     rocket::ignite()
