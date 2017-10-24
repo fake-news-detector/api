@@ -10,7 +10,13 @@ RUN echo deb http://apt.newrelic.com/debian/ newrelic non-free >> /etc/apt/sourc
   && apt-get update \
   && apt-get install newrelic-sysmond
 
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+  && apt-get install -y nodejs
+
 WORKDIR /app
+
+COPY src/scrapper/package.json src/scrapper/package-lock.json ./src/scrapper/
+RUN cd src/scrapper && npm install && cd -
 
 COPY Cargo.toml Cargo.lock ./
 COPY src/dummy.rs src/main.rs
