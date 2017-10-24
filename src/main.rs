@@ -15,7 +15,7 @@ use rocket_contrib::Template;
 pub mod data;
 pub mod endpoints;
 pub mod lib;
-pub mod extractor;
+pub mod scrapper;
 
 fn main() {
     rocket::ignite()
