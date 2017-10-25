@@ -24,7 +24,9 @@ You need to have installed:
 docker-compose up
 ```
 
-That's it! Now go to `http://localhost:8000/` to check.
+It will take a while, about 20 minutes to download an compile all rust dependencies.
+
+But that's it! Now go to `http://localhost:8000/` and it should be running.
 
 
 ## Testing
