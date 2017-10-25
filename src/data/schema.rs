@@ -12,6 +12,7 @@ table! {
         id -> Integer,
         url -> Text,
         title -> Text,
+        content -> Text,
     }
 }
 

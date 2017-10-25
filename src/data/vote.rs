@@ -1,6 +1,4 @@
 extern crate diesel;
-extern crate rocket;
-extern crate rocket_contrib;
 extern crate reqwest;
 use diesel::prelude::*;
 use diesel::expression::dsl::*;
