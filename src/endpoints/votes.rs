@@ -1,7 +1,7 @@
 extern crate diesel;
+extern crate reqwest;
 extern crate rocket;
 extern crate rocket_contrib;
-extern crate reqwest;
 
 use rocket_contrib::Json;
 use diesel::prelude::*;
@@ -31,7 +31,7 @@ pub struct GetVotesResponse {
 fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<GetVotesResponse>> {
     let robinho_votes = get_robinho_prediction(&params.title);
     let people_votes = get_people_votes(&params.url, &*conn)?;
-    let verified = get_verified_category(params.url);
+    let verified = get_verified_category(&params.url);
 
     Ok(Json(GetVotesResponse {
         verified: verified,
