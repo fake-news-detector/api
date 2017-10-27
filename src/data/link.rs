@@ -1,4 +1,5 @@
 extern crate diesel;
+
 use diesel::prelude::*;
 use data::schema::links::dsl;
 use data::schema::links;

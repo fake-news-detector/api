@@ -2,6 +2,7 @@ extern crate diesel;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate reqwest;
+
 use rocket_contrib::Json;
 use diesel::prelude::*;
 use data::schema::votes::dsl::*;

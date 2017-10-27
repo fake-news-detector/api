@@ -1,6 +1,7 @@
 extern crate diesel;
 extern crate rocket;
 extern crate rocket_contrib;
+
 use rocket_contrib::Json;
 use diesel::prelude::*;
 use diesel::expression::dsl::*;

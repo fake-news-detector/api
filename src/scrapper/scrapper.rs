@@ -1,5 +1,6 @@
 extern crate select;
 extern crate reqwest;
+
 use select::document::Document;
 use select::predicate::Class;
 use std::process::Command;
