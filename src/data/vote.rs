@@ -1,5 +1,6 @@
 extern crate diesel;
 extern crate reqwest;
+
 use diesel::prelude::*;
 use diesel::expression::dsl::*;
 use data::schema::links::dsl;
