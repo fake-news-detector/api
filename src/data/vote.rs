@@ -6,7 +6,7 @@ use diesel::expression::dsl::*;
 use data::schema::links::dsl;
 use data::schema::votes;
 use data::link::Link;
-use diesel::types::{Integer, BigInt};
+use diesel::types::{BigInt, Integer};
 use data::verified_list;
 
 #[derive(Serialize, Deserialize, Identifiable, Queryable, Associations)]
@@ -50,22 +50,26 @@ pub struct RobinhoResponse {
     pub predictions: Vec<RobotVote>,
 }
 
-pub fn get_robinho_prediction(title: &String) -> RobinhoResponse {
+pub fn get_robinho_prediction(title: &str) -> RobinhoResponse {
     let mut prediction_url = reqwest::Url::parse("https://robinho.herokuapp.com/predict").unwrap();
     prediction_url.query_pairs_mut().append_pair("title", title);
 
     reqwest::get(prediction_url)
         .and_then(|mut r| r.json())
-        .unwrap_or(RobinhoResponse { predictions: Vec::new() })
+        .unwrap_or(RobinhoResponse {
+            predictions: Vec::new(),
+        })
 }
 
-pub fn get_people_votes(url: &String, conn: &PgConnection) -> QueryResult<Vec<PeopleVote>> {
+pub fn get_people_votes(url: &str, conn: &PgConnection) -> QueryResult<Vec<PeopleVote>> {
     let link: Result<Link, diesel::result::Error> = dsl::links.filter(dsl::url.eq(url)).first(conn);
 
     match link {
         Ok(link) => {
             let query = sql::<(Integer, BigInt)>(&format!(
-                "SELECT category_id, count(*) FROM votes WHERE link_id = {} GROUP BY category_id",
+                "SELECT category_id, count(*) FROM \
+                 votes WHERE link_id = {} GROUP BY \
+                 category_id",
                 link.id
             ));
             query.load::<PeopleVote>(conn)
@@ -74,6 +78,6 @@ pub fn get_people_votes(url: &String, conn: &PgConnection) -> QueryResult<Vec<Pe
     }
 }
 
-pub fn get_verified_category(url: String) -> Option<VerifiedVote> {
-    verified_list::get_category(url).map(|cid| VerifiedVote { category_id: cid })
+pub fn get_verified_category(url: &str) -> Option<VerifiedVote> {
+    verified_list::get_category(&url).map(|cid| VerifiedVote { category_id: cid })
 }

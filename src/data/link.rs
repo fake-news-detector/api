@@ -22,7 +22,7 @@ pub struct NewLink<'a> {
     pub content: &'a str,
 }
 
-pub fn find_or_create(url: &String, title: &String, conn: &PgConnection) -> QueryResult<Link> {
+pub fn find_or_create(url: &str, title: &str, conn: &PgConnection) -> QueryResult<Link> {
     let link = dsl::links.filter(dsl::url.eq(url)).first::<Link>(conn);
 
     link.or_else(|_| {
