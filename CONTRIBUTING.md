@@ -51,7 +51,7 @@ We have a postman collection ready for you to use for debugging the API, just [d
 
 ## Running Outside Docker
 
-If you want to run the app outside docker for faster development flow, you will need to install [nightly rust](https://doc.rust-lang.org/1.2.0/book/nightly-rust.html), and [cargo watch](https://github.com/passcod/cargo-watch).
+If you want to run the app outside docker for faster development flow, you will need to install [nightly rust](https://doc.rust-lang.org/1.2.0/book/nightly-rust.html), [cargo watch](https://github.com/passcod/cargo-watch) and [nodejs](https://nodejs.org/en/).
 
 Also, you will need to have a postgres database running, if you don't, you can run it with docker-compose:
 
@@ -63,6 +63,15 @@ Expose the database url:
 
 ```
 export DATABASE_URL="postgres://postgres:password@localhost:5432/fakenews"
+```
+
+Install the rust and js dependencies:
+
+```
+cargo install
+cd src/scrapper/
+npm install
+cd -
 ```
 
 Then start the app:

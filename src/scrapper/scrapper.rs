@@ -1,11 +1,12 @@
-extern crate select;
 extern crate reqwest;
+extern crate select;
+
 use select::document::Document;
 use select::predicate::Class;
 use std::process::Command;
 use std::io::Read;
 
-pub fn extract_facebook_text(url: &String) -> Option<String> {
+pub fn extract_facebook_text(url: &str) -> Option<String> {
     let mut request = reqwest::get(url).ok()?;
     let mut body = String::new();
     request.read_to_string(&mut body).ok()?;
@@ -21,7 +22,7 @@ pub fn extract_facebook_text(url: &String) -> Option<String> {
     None
 }
 
-pub fn extract_text(url: &String) -> Option<String> {
+pub fn extract_text(url: &str) -> Option<String> {
     if url.contains("facebook.com/") {
         return extract_facebook_text(url);
     }
@@ -43,7 +44,7 @@ pub fn extract_text(url: &String) -> Option<String> {
 
 #[test]
 fn it_extracts_text_from_url() {
-    let text = extract_text(&String::from("https://goo.gl/d9WM3W")).unwrap_or(String::from(""));
+    let text = extract_text("https://goo.gl/d9WM3W").unwrap_or(String::from(""));
 
     println!("Found text: {}", text);
     assert!(text.contains(
@@ -54,7 +55,7 @@ fn it_extracts_text_from_url() {
 #[test]
 fn it_extracts_text_from_facebook_posts() {
     let url = "https://www.facebook.com/VerdadeSemManipulacao/videos/479313152193503/";
-    let text = extract_text(&String::from(url)).unwrap_or(String::from(""));
+    let text = extract_text(url).unwrap_or(String::from(""));
 
     println!("Found text: {}", text);
     assert!(text.contains(

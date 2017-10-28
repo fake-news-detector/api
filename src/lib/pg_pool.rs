@@ -2,6 +2,7 @@ extern crate diesel;
 extern crate r2d2_diesel;
 extern crate r2d2;
 extern crate rocket;
+
 use std::ops::Deref;
 use rocket::http::Status;
 use rocket::request::{self, FromRequest};

@@ -1,6 +1,7 @@
 extern crate diesel;
 extern crate rocket;
 extern crate rocket_contrib;
+
 use rocket::Outcome;
 use rocket::request::{self, Request, FromRequest};
 
