@@ -29,12 +29,19 @@ pub struct GetVotesResponse {
 
 #[get("/votes?<params>")]
 fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<GetVotesResponse>> {
+    let verified = get_verified_category(&params.url);
+    if verified.is_some() {
+        return Ok(Json(GetVotesResponse {
+            verified: verified,
+            robot: vec![],
+            people: vec![],
+        }));
+    }
+
     let robinho_votes = get_robinho_prediction(&params.title);
     let people_votes = get_people_votes(&params.url, &*conn)?;
-    let verified = get_verified_category(&params.url);
-
     Ok(Json(GetVotesResponse {
-        verified: verified,
+        verified: None,
         robot: robinho_votes.predictions,
         people: people_votes,
     }))
