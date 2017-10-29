@@ -1,6 +1,6 @@
 ----
 
-[Pre-Requirements](#pre-requirements) | [Running](#running) | [Testing](#testing) | [Postman](#postman) | [Running outside docker](#running-outside-docker) | [Tech Stack](#tech-stack) | [Formatting](#formatting) | [Deploy](#deploy)
+[Pre-Requirements](#pre-requirements) | [Running](#running) | [Testing](#testing) | [Postman](#postman) | [Running outside docker](#running-outside-docker) | [Tech Stack](#tech-stack) | [Formatting](#formatting) | [Deploy](#deploy) | [Jobs](#jobs)
 
 ----
 
@@ -110,3 +110,20 @@ Also, we add no configuration to it, just use the standard behaviours, this way 
 The deploy is automatically done by [the CircleCI pipeline](https://circleci.com/gh/fake-news-detector/api) after merging to master.
 
 If you want to learn more how it works, read about deploying to heroku with docker [on the oficial docs](https://devcenter.heroku.com/articles/container-registry-and-runtime).
+
+
+## Jobs
+
+There are some jobs for helping administrating the app, for creating and running migrations, check out [diesel's docummentation](http://diesel.rs/).
+
+Custom jobs are added on the `src/jobs.rs` file, and ran like this:
+
+```
+cargo run -- --scrape-missing-data
+```
+
+or, if the app is installed:
+
+```
+fake-news-api --scrape-missing-data
+```
