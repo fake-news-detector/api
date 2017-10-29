@@ -50,15 +50,17 @@ pub struct RobinhoResponse {
     pub predictions: Vec<RobotVote>,
 }
 
-pub fn get_robinho_prediction(title: &str) -> RobinhoResponse {
+pub fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
     let mut prediction_url = reqwest::Url::parse("https://robinho.herokuapp.com/predict").unwrap();
     prediction_url.query_pairs_mut().append_pair("title", title);
+    prediction_url.query_pairs_mut().append_pair(
+        "content",
+        content,
+    );
 
     reqwest::get(prediction_url)
         .and_then(|mut r| r.json())
-        .unwrap_or(RobinhoResponse {
-            predictions: Vec::new(),
-        })
+        .unwrap_or(RobinhoResponse { predictions: Vec::new() })
 }
 
 pub fn get_people_votes(url: &str, conn: &PgConnection) -> QueryResult<Vec<PeopleVote>> {

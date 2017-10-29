@@ -14,6 +14,7 @@ use diesel::result::Error::*;
 use diesel::result::DatabaseErrorKind::*;
 use data::vote::*;
 use data::link::*;
+use scrapper::scrapper;
 
 #[derive(FromForm)]
 pub struct GetVotesParams {
@@ -29,20 +30,19 @@ pub struct GetVotesResponse {
 
 #[get("/votes?<params>")]
 fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<GetVotesResponse>> {
+    let mut robinho_votes = vec![];
+    let mut people_votes = vec![];
+
     let verified = get_verified_category(&params.url);
-    if verified.is_some() {
-        return Ok(Json(GetVotesResponse {
-            verified: verified,
-            robot: vec![],
-            people: vec![],
-        }));
+    if verified.is_none() {
+        let content = scrapper::extract_text(&params.url).unwrap_or(String::from(""));
+        robinho_votes = get_robinho_prediction(&params.title, &content).predictions;
+        people_votes = get_people_votes(&params.url, &*conn)?;
     }
 
-    let robinho_votes = get_robinho_prediction(&params.title);
-    let people_votes = get_people_votes(&params.url, &*conn)?;
     Ok(Json(GetVotesResponse {
         verified: None,
-        robot: robinho_votes.predictions,
+        robot: robinho_votes,
         people: people_votes,
     }))
 }
