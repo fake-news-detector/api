@@ -28,7 +28,7 @@ You can list all links and its main voted category with:
 
 Response format:
 
-`[{ id: int, url: string, title: string, category_id: int, count: 1 }]`
+`[{ id: int, url: string, title: string, content: null | string, category_id: int, count: 1 }]`
 
 This endpoint is used by [Robinho](https://github.com/fake-news-detector/robinho) to fetch the links and train its classification algorithms.
 
