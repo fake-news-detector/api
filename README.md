@@ -8,7 +8,7 @@ Fake News Detector API
 
 ## JSON API endpoints
 
-The JSON API is currently running under the url https://fake-news-detector-api.herokuapp.com/
+The JSON API is currently running under the url https://api.fakenewsdetector.org/
 
 ### Categories
 

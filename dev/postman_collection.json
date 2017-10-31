@@ -107,7 +107,7 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://fake-news-detector-api.herokuapp.com/votes?url=http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html&title=Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo",
+							"raw": "https://api.fakenewsdetector.org/votes?url=http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html&title=Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo",
 							"protocol": "http",
 							"host": [
 								"fake-news-detector-api",
@@ -149,7 +149,7 @@
 							"raw": "{\n\t\"uuid\": \"123\",\n\t\"url\": \"http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html\",\n\t\"title\": \"Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo\",\n\t\"category_id\": 4\n}"
 						},
 						"url": {
-							"raw": "http://fake-news-detector-api.herokuapp.com/vote",
+							"raw": "https://api.fakenewsdetector.org/vote",
 							"protocol": "http",
 							"host": [
 								"fake-news-detector-api",
@@ -171,7 +171,7 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://fake-news-detector-api.herokuapp.com/links/all",
+							"raw": "https://api.fakenewsdetector.org/links/all",
 							"protocol": "http",
 							"host": [
 								"fake-news-detector-api",
