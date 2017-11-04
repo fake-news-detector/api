@@ -7,8 +7,9 @@ use diesel::prelude::*;
 use data::category::Category;
 use lib::pg_pool::DbConn;
 use data::schema::categories::dsl::*;
+use lib::responders::*;
 
 #[get("/categories")]
-pub fn get_categories(conn: DbConn) -> QueryResult<Json<Vec<Category>>> {
-    categories.load::<Category>(&*conn).map(Json)
+pub fn get_categories(conn: DbConn) -> QueryResult<Cors<Json<Vec<Category>>>> {
+    categories.load::<Category>(&*conn).map(Json).map(Cors)
 }

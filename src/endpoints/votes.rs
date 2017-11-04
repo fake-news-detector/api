@@ -15,6 +15,7 @@ use diesel::result::DatabaseErrorKind::*;
 use data::vote::*;
 use data::link::*;
 use scrapper::scrapper;
+use lib::responders::*;
 
 #[derive(FromForm)]
 pub struct GetVotesParams {
@@ -29,7 +30,7 @@ pub struct GetVotesResponse {
 }
 
 #[get("/votes?<params>")]
-fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<GetVotesResponse>> {
+fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Cors<Json<GetVotesResponse>>> {
     let mut robinho_votes = vec![];
     let mut people_votes = vec![];
 
@@ -40,11 +41,11 @@ fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Json<GetVotesR
         people_votes = get_people_votes(&params.url, &*conn)?;
     }
 
-    Ok(Json(GetVotesResponse {
+    Ok(Cors(Json(GetVotesResponse {
         verified: None,
         robot: robinho_votes,
         people: people_votes,
-    }))
+    })))
 }
 
 #[derive(Deserialize)]
@@ -60,7 +61,7 @@ fn post_vote(
     params: Json<PostVote>,
     conn: DbConn,
     remote_ip: RemoteIp,
-) -> Result<Json<Vote>, status::Custom<String>> {
+) -> Result<Cors<Json<Vote>>, status::Custom<String>> {
     let link = find_or_create(&params.url, &params.title, &*conn);
 
     let insert_query = link.and_then(|l| {
@@ -82,6 +83,6 @@ fn post_vote(
         Err(_) => Err(status::Custom(
             Status::InternalServerError,
             String::from("Internal Server Error"),
-        )),
-    }
+        ))
+    }.map(Cors)
 }
