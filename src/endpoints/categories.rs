@@ -10,6 +10,6 @@ use data::schema::categories::dsl::*;
 use lib::responders::*;
 
 #[get("/categories")]
-pub fn get_categories(conn: DbConn) -> QueryResult<Cors<Json<Vec<Category>>>> {
-    categories.load::<Category>(&*conn).map(Json).map(Cors)
+pub fn get_categories(conn: DbConn) -> QueryResult<Cached<Cors<Json<Vec<Category>>>>> {
+    categories.load::<Category>(&*conn).map(Json).map(Cors).map(Cached)
 }

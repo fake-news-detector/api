@@ -30,7 +30,7 @@ pub struct GetVotesResponse {
 }
 
 #[get("/votes?<params>")]
-fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Cors<Json<GetVotesResponse>>> {
+fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Cached<Cors<Json<GetVotesResponse>>>> {
     let mut robinho_votes = vec![];
     let mut people_votes = vec![];
 
@@ -41,11 +41,11 @@ fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Cors<Json<GetV
         people_votes = get_people_votes(&params.url, &*conn)?;
     }
 
-    Ok(Cors(Json(GetVotesResponse {
+    Ok(Cached(Cors(Json(GetVotesResponse {
         verified: None,
         robot: robinho_votes,
         people: people_votes,
-    })))
+    }))))
 }
 
 #[derive(Deserialize)]

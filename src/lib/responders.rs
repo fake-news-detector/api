@@ -14,3 +14,16 @@ impl<'r, R: Responder<'r>> Responder<'r> for Cors<R> {
             .ok()
     }
 }
+
+
+pub struct Cached<R>(pub R);
+
+impl<'r, R: Responder<'r>> Responder<'r> for Cached<R> {
+    #[inline(always)]
+    fn respond_to(self, req: &Request) -> Result<Response<'r>, Status> {
+        Response::build()
+            .merge(self.0.respond_to(req)?)
+            .raw_header("Cache-Control", "max-age=86400") // 1 day
+            .ok()
+    }
+}
