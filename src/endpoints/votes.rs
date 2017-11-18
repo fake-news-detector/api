@@ -42,7 +42,7 @@ fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Cached<Cors<Js
     }
 
     Ok(Cached(Cors(Json(GetVotesResponse {
-        verified: None,
+        verified: verified,
         robot: robinho_votes,
         people: people_votes,
     }))))
