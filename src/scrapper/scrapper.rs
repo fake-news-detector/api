@@ -43,6 +43,7 @@ pub fn extract_text(url: &str) -> Option<String> {
 }
 
 #[test]
+#[ignore]
 fn it_extracts_text_from_url() {
     let text = extract_text("https://goo.gl/d9WM3W").unwrap_or(String::from(""));
 

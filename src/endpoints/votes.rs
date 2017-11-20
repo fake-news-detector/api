@@ -6,8 +6,8 @@ extern crate rocket_contrib;
 use rocket_contrib::Json;
 use diesel::prelude::*;
 use data::schema::votes::dsl::*;
-use lib::pg_pool::DbConn;
-use lib::remote_ip::RemoteIp;
+use commons::pg_pool::DbConn;
+use commons::remote_ip::RemoteIp;
 use rocket::response::status;
 use rocket::http::Status;
 use diesel::result::Error::*;
@@ -15,7 +15,7 @@ use diesel::result::DatabaseErrorKind::*;
 use data::vote::*;
 use data::link::*;
 use scrapper::scrapper;
-use lib::responders::*;
+use commons::responders::*;
 
 #[derive(FromForm)]
 pub struct GetVotesParams {
