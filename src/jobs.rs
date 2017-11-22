@@ -1,6 +1,6 @@
 extern crate diesel;
 
-use lib::pg_pool;
+use commons::pg_pool;
 use diesel::prelude::*;
 use data::schema::links::dsl;
 use data::link::*;

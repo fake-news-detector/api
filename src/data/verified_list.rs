@@ -29,38 +29,44 @@ pub fn get_category(url: &str) -> Option<i32> {
     None
 }
 
-#[test]
-fn it_finds_category_for_legitimate_domain() {
-    assert_eq!(get_category("https://g1.globo.com"), Some(1));
-}
+#[cfg(test)]
+mod tests {
 
-#[test]
-fn it_finds_category_for_satire_domain() {
-    assert_eq!(get_category("https://g1.globo.com"), Some(1));
-}
+    use super::*;
 
-#[test]
-fn it_finds_category_for_url_containing_the_domain() {
-    assert_eq!(get_category("https://g1.globo.com/some/news"), Some(1));
-    assert_eq!(
-        get_category("https://bizarro.g1.globo.com/some/news"),
-        Some(1)
-    );
-}
+    #[test]
+    fn it_finds_category_for_legitimate_domain() {
+        assert_eq!(get_category("https://g1.globo.com"), Some(1));
+    }
 
-#[test]
-fn it_returns_none_for_fake_url_containing_the_domain() {
-    assert_eq!(
-        get_category("https://fake.news/g1.globo.com/some/news"),
-        None
-    );
-    assert_eq!(
-        get_category("https://g1.globo.com.fake.news/some/news"),
-        None
-    );
-}
+    #[test]
+    fn it_finds_category_for_satire_domain() {
+        assert_eq!(get_category("https://g1.globo.com"), Some(1));
+    }
 
-#[test]
-fn it_returns_none_invalid_url() {
-    assert_eq!(get_category("foo"), None);
+    #[test]
+    fn it_finds_category_for_url_containing_the_domain() {
+        assert_eq!(get_category("https://g1.globo.com/some/news"), Some(1));
+        assert_eq!(
+            get_category("https://bizarro.g1.globo.com/some/news"),
+            Some(1)
+        );
+    }
+
+    #[test]
+    fn it_returns_none_for_fake_url_containing_the_domain() {
+        assert_eq!(
+            get_category("https://fake.news/g1.globo.com/some/news"),
+            None
+        );
+        assert_eq!(
+            get_category("https://g1.globo.com.fake.news/some/news"),
+            None
+        );
+    }
+
+    #[test]
+    fn it_returns_none_invalid_url() {
+        assert_eq!(get_category("foo"), None);
+    }
 }
