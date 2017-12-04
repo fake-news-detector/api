@@ -1,5 +1,6 @@
 extern crate reqwest;
 extern crate select;
+extern crate serde_json;
 
 use select::document::Document;
 use select::predicate::Class;
@@ -22,9 +23,15 @@ pub fn extract_facebook_text(url: &str) -> Option<String> {
     None
 }
 
-pub fn extract_text(url: &str) -> Option<String> {
+#[derive(Serialize, Deserialize)]
+pub struct ExtractedData {
+    pub title: String,
+    pub content: String
+}
+
+pub fn extract_text(url: &str) -> Option<ExtractedData> {
     if url.contains("facebook.com/") {
-        return extract_facebook_text(url);
+        return extract_facebook_text(url).map(|content| ExtractedData { content : content, title : String::from("") });
     }
 
     let output = Command::new("node")
@@ -39,7 +46,8 @@ pub fn extract_text(url: &str) -> Option<String> {
     if response.is_empty() {
         return None;
     }
-    Some(response)
+
+    serde_json::from_str(&response).ok()
 }
 
 #[cfg(test)]
@@ -48,22 +56,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_extracts_text_from_url() {
-        let text = extract_text("https://goo.gl/d9WM3W").unwrap_or(String::from(""));
+    fn it_extracts_text_and_title_from_url() {
+        let data = extract_text("https://goo.gl/d9WM3W").unwrap_or(ExtractedData {
+            title: String::from(""),
+            content: String::from(""),
+        });
 
-        println!("Found text: {}", text);
-        assert!(text.contains(
+        println!("Found text: {}", data.content);
+        assert!(data.content.contains(
             "Em setembro, a imagem de uma menina tocando o pé do artista Wagner Schwartz",
         ));
+        assert_eq!(data.title, "Globo defende exposições do “MAM” e “Queermuseu”, ofende brasileiros e revolta a internet");
     }
 
     #[test]
     fn it_extracts_text_from_facebook_posts() {
         let url = "https://www.facebook.com/VerdadeSemManipulacao/videos/479313152193503/";
-        let text = extract_text(url).unwrap_or(String::from(""));
+        let content = extract_text(url).map(|data| data.content).unwrap_or(String::from(""));
 
-        println!("Found text: {}", text);
-        assert!(text.contains(
+        println!("Found text: {}", content);
+        assert!(content.contains(
             "Feliciano,admite que estaria com um grupo, blindando e salvando a pele de Eduardo Cunha",
         ));
     }

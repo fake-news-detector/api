@@ -20,7 +20,7 @@ use commons::responders::*;
 #[derive(FromForm)]
 pub struct GetVotesParams {
     url: String,
-    title: String,
+    title: Option<String>,
 }
 #[derive(Serialize, Deserialize)]
 pub struct GetVotesResponse {
@@ -30,14 +30,23 @@ pub struct GetVotesResponse {
 }
 
 #[get("/votes?<params>")]
-fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Cached<Cors<Json<GetVotesResponse>>>> {
+fn get_votes(
+    params: GetVotesParams,
+    conn: DbConn,
+) -> QueryResult<Cached<Cors<Json<GetVotesResponse>>>> {
     let mut robinho_votes = vec![];
     let mut people_votes = vec![];
 
     let verified = get_verified_category(&params.url);
     if verified.is_none() {
-        let content = scrapper::extract_text(&params.url).unwrap_or(String::from(""));
-        robinho_votes = get_robinho_prediction(&params.title, &content).predictions;
+        let data = scrapper::extract_text(&params.url).unwrap_or(scrapper::ExtractedData {
+            title: String::from(""),
+            content: String::from(""),
+        });
+        let content = data.content;
+        let title = params.title.unwrap_or(data.title);
+
+        robinho_votes = get_robinho_prediction(&title, &content).predictions;
         people_votes = get_people_votes(&params.url, &*conn)?;
     }
 
@@ -83,6 +92,6 @@ fn post_vote(
         Err(_) => Err(status::Custom(
             Status::InternalServerError,
             String::from("Internal Server Error"),
-        ))
+        )),
     }.map(Cors)
 }
