@@ -1,9 +1,9 @@
 extern crate rocket;
 extern crate rocket_contrib;
 
-use rocket_contrib::Template;
+use rocket::response::Redirect;
 
 #[get("/")]
-fn index() -> Template {
-    Template::render("index", {})
+fn index() -> Redirect {
+    Redirect::moved("https://github.com/fake-news-detector/api/#json-api-endpoints")
 }
