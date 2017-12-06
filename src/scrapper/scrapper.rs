@@ -29,7 +29,7 @@ pub struct ExtractedData {
     pub content: String
 }
 
-pub fn extract_text(url: &str) -> Option<ExtractedData> {
+pub fn extract_data(url: &str) -> Option<ExtractedData> {
     if url.contains("facebook.com/") {
         return extract_facebook_text(url).map(|content| ExtractedData { content : content, title : String::from("") });
     }
@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn it_extracts_text_and_title_from_url() {
-        let data = extract_text("https://goo.gl/d9WM3W").unwrap_or(ExtractedData {
+        let data = extract_data("https://goo.gl/d9WM3W").unwrap_or(ExtractedData {
             title: String::from(""),
             content: String::from(""),
         });
@@ -72,7 +72,7 @@ mod tests {
     #[test]
     fn it_extracts_text_from_facebook_posts() {
         let url = "https://www.facebook.com/VerdadeSemManipulacao/videos/479313152193503/";
-        let content = extract_text(url).map(|data| data.content).unwrap_or(String::from(""));
+        let content = extract_data(url).map(|data| data.content).unwrap_or(String::from(""));
 
         println!("Found text: {}", content);
         assert!(content.contains(

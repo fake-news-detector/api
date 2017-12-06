@@ -27,7 +27,7 @@ pub fn find_or_create(url: &str, title: &str, conn: &PgConnection) -> QueryResul
     let link = dsl::links.filter(dsl::url.eq(url)).first::<Link>(conn);
 
     link.or_else(|_| {
-        let content = scrapper::extract_text(url)
+        let content = scrapper::extract_data(url)
             .map(|data| data.content)
             .to_owned();
 
@@ -41,7 +41,7 @@ pub fn find_or_create(url: &str, title: &str, conn: &PgConnection) -> QueryResul
 }
 
 pub fn rescrape_content(link: &Link, conn: &PgConnection) -> QueryResult<Link> {
-    let content = scrapper::extract_text(&link.url)
+    let content = scrapper::extract_data(&link.url)
         .map(|data| data.content)
         .to_owned();
 

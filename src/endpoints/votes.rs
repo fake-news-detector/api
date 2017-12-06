@@ -39,7 +39,7 @@ fn get_votes(
 
     let verified = get_verified_category(&params.url);
     if verified.is_none() {
-        let data = scrapper::extract_text(&params.url).unwrap_or(scrapper::ExtractedData {
+        let data = scrapper::extract_data(&params.url).unwrap_or(scrapper::ExtractedData {
             title: String::from(""),
             content: String::from(""),
         });
