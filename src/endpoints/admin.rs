@@ -10,6 +10,7 @@ use rocket::http::Status;
 use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, FromRequest, Request};
 use rocket::outcome::IntoOutcome;
+use std::env;
 
 #[get("/admin")]
 fn admin() -> Template {
@@ -44,7 +45,11 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
 fn login(mut cookies: Cookies,
          params: Json<LoginParams>)
          -> Result<Json<User>, status::Custom<String>> {
-    if params.email == "foo@bar.baz" && params.password == "baz" {
+
+    let admin_email = env::var("ADMIN_EMAIL").unwrap_or(String::from("admin@fakenewsdetector.org"));
+    let admin_password = env::var("ADMIN_PASSWORD").unwrap_or(String::from("123"));
+
+    if params.email == admin_email && params.password == admin_password {
         cookies.add_private(Cookie::new("user_email", params.email.to_owned()));
         return Ok(Json(User { email: params.email.to_owned() }));
     }

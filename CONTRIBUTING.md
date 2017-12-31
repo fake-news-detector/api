@@ -23,7 +23,9 @@ docker-compose up
 
 It will take a while, about 20 minutes to download an compile all rust dependencies.
 
-But that's it! Now go to `http://localhost:8000/` and it should be running.
+But that's it! Now go to `http://localhost:8000/admin` and it should be running.
+
+The default credentials for logging in the admin area are email: `admin@fakenewsdetector.org`, password: `123`
 
 ## Testing
 
@@ -51,12 +53,6 @@ Also, you will need to have a postgres database running, if you don't, you can r
 
 ```
 docker-compose up database
-```
-
-Expose the database url:
-
-```
-export DATABASE_URL="postgres://postgres:password@localhost:5432/fakenews"
 ```
 
 Install the rust and js dependencies:
