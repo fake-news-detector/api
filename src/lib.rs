@@ -42,6 +42,7 @@ pub fn start_server() {
                        endpoints::links::get_all_links,
                        endpoints::index::index,
                        endpoints::admin::admin,
+                       endpoints::admin::login,
                        static_files])
         .attach(Template::fairing())
         .launch();
