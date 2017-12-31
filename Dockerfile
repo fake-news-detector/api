@@ -24,6 +24,7 @@ RUN cd src/scrapper && npm install && cd -
 COPY Cargo.toml Cargo.lock ./
 COPY src/dummy.rs src/main.rs
 RUN cargo build --release
+RUN cargo build --tests
 
 COPY elm-package.json ./
 RUN elm package install --yes
