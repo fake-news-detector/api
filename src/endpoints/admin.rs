@@ -5,6 +5,11 @@ use rocket_contrib::Template;
 use diesel::prelude::*;
 use data::link::*;
 use commons::pg_pool::DbConn;
+use rocket::response::status;
+use rocket::http::Status;
+use rocket::http::{Cookie, Cookies};
+use rocket::request::{self, FromRequest, Request};
+use rocket::outcome::IntoOutcome;
 
 #[get("/admin")]
 fn admin() -> Template {
@@ -16,14 +21,45 @@ struct LoginParams {
     email: String,
     password: String,
 }
-#[derive(Serialize, Deserialize)]
-pub struct LoginResponse {
+
+#[derive(Debug, Serialize, Deserialize)]
+struct User {
     email: String,
 }
 
+impl<'a, 'r> FromRequest<'a, 'r> for User {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<User, ()> {
+        request
+            .cookies()
+            .get_private("user_email")
+            .and_then(|cookie| cookie.value().parse().ok())
+            .map(|email| User { email: email })
+            .or_forward(())
+    }
+}
+
 #[post("/admin/login", data = "<params>")]
-fn login(params: Json<LoginParams>) -> Json<LoginResponse> {
-    Json(LoginResponse { email: params.email.to_owned() })
+fn login(mut cookies: Cookies,
+         params: Json<LoginParams>)
+         -> Result<Json<User>, status::Custom<String>> {
+    if params.email == "foo@bar.baz" && params.password == "baz" {
+        cookies.add_private(Cookie::new("user_email", params.email.to_owned()));
+        return Ok(Json(User { email: params.email.to_owned() }));
+    }
+    Err(status::Custom(Status::Forbidden, String::from("Invalid email or password")))
+}
+
+#[get("/admin/login")]
+fn get_login(user: User) -> Json<User> {
+    Json(user)
+}
+
+#[post("/admin/logout")]
+fn logout(mut cookies: Cookies) -> Json<bool> {
+    cookies.remove_private(Cookie::named("user_email"));
+    Json(true)
 }
 
 #[derive(Deserialize)]
@@ -32,6 +68,9 @@ struct VerifyLinkParams {
     category_id: Option<i32>,
 }
 #[post("/admin/verify_link", data = "<params>")]
-fn verify_link(params: Json<VerifyLinkParams>, conn: DbConn) -> QueryResult<Json<Link>> {
+fn verify_link(_user: User,
+               params: Json<VerifyLinkParams>,
+               conn: DbConn)
+               -> QueryResult<Json<Link>> {
     set_verified_category_id(params.link_id, params.category_id, &*conn).map(Json)
 }

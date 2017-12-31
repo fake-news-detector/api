@@ -7,6 +7,7 @@ import Form exposing (Form)
 import Form.Input as Input
 import Form.Validate as Validate exposing (..)
 import Html
+import Http exposing (Error(..))
 import Json.Decode as Decode exposing (..)
 import Json.Decode.Pipeline exposing (..)
 import Json.Encode as Encode exposing (..)
@@ -17,8 +18,11 @@ import Stylesheet exposing (..)
 
 
 type Msg
-    = FormMsg Form.Msg
+    = LoadLogin
+    | FormMsg Form.Msg
     | LoginResponse (WebData User)
+    | Logout
+    | LogoutResponse (WebData ())
 
 
 type alias Model =
@@ -67,6 +71,9 @@ loginEncoder loginForm =
 update : Msg -> Model -> Return Msg Model
 update msg model =
     case msg of
+        LoadLogin ->
+            return model (RemoteData.Http.get "/admin/login" LoginResponse userDecoder)
+
         FormMsg formMsg ->
             case ( formMsg, Form.getOutput model.form ) of
                 ( Form.Submit, Just loginForm ) ->
@@ -83,6 +90,17 @@ update msg model =
         LoginResponse response ->
             return { model | response = response } Cmd.none
 
+        Logout ->
+            return model (RemoteData.Http.post "/admin/logout" LogoutResponse (Decode.succeed ()) (Encode.object []))
+
+        LogoutResponse response ->
+            case response of
+                Success _ ->
+                    return init Cmd.none
+
+                _ ->
+                    return model Cmd.none
+
 
 view : Model -> Element Styles variation Msg
 view model =
@@ -97,8 +115,16 @@ view model =
             Success user ->
                 text ("Signed in as " ++ user.email)
 
-            Failure _ ->
-                text "Error"
+            Failure error ->
+                case error of
+                    BadStatus response ->
+                        if response.status.code == 404 then
+                            empty
+                        else
+                            text response.status.message
+
+                    _ ->
+                        text "Error signing in"
 
             NotAsked ->
                 empty

@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Element exposing (..)
 import Element.Attributes exposing (..)
+import Element.Events exposing (..)
 import Html
 import Links
 import Login
@@ -24,12 +25,15 @@ type alias Model =
 
 init : Return Msg Model
 init =
-    return
-        { login = Login.init
-        , loggedInUser = Nothing
-        , links = Links.init
-        }
-        Cmd.none
+    Login.update Login.LoadLogin Login.init
+        |> Return.mapCmd MsgForLogin
+        |> Return.map
+            (\login ->
+                { login = login
+                , loggedInUser = Nothing
+                , links = Links.init
+                }
+            )
 
 
 update : Msg -> Model -> Return Msg Model
@@ -40,6 +44,9 @@ update msg model =
                 |> Return.map (\login -> { model | login = login, loggedInUser = Just user })
                 |> Return.mapCmd MsgForLogin
                 |> Return.andThen (update (MsgForLinks Links.LoadLinks))
+
+        MsgForLogin (Login.LogoutResponse (Success _)) ->
+            init
 
         MsgForLogin msg ->
             Login.update msg model.login
@@ -80,7 +87,7 @@ view model =
             ]
 
 
-navigation : Model -> Element Styles variation msg
+navigation : Model -> Element Styles variation Msg
 navigation model =
     row Navigation
         [ spread, paddingXY 80 20, width (percent 100) ]
@@ -90,5 +97,9 @@ navigation model =
                 empty
 
             Just user ->
-                text ("Signed in as " ++ user.email)
+                row None
+                    [ spacingXY 10 0 ]
+                    [ text ("Signed in as " ++ user.email)
+                    , button None [ onClick (MsgForLogin Login.Logout), paddingXY 10 0 ] (text "Logout")
+                    ]
         ]
