@@ -3,31 +3,53 @@ module Main exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Html
+import Links
 import Login
+import RemoteData exposing (..)
 import Return exposing (..)
 import Stylesheet exposing (..)
 
 
 type Msg
     = MsgForLogin Login.Msg
+    | MsgForLinks Links.Msg
 
 
 type alias Model =
-    { login : Login.Model }
+    { login : Login.Model
+    , loggedInUser : Maybe Login.User
+    , links : Links.Model
+    }
 
 
 init : Return Msg Model
 init =
-    return { login = Login.init } Cmd.none
+    return
+        { login = Login.init
+        , loggedInUser = Nothing
+        , links = Links.init
+        }
+        Cmd.none
 
 
 update : Msg -> Model -> Return Msg Model
 update msg model =
     case msg of
+        MsgForLogin (Login.LoginResponse (Success user)) ->
+            Login.update (Login.LoginResponse (Success user)) model.login
+                |> Return.map (\login -> { model | login = login, loggedInUser = Just user })
+                |> Return.mapCmd MsgForLogin
+                |> Return.andThen (update (MsgForLinks Links.LoadLinks))
+
         MsgForLogin msg ->
             Login.update msg model.login
                 |> Return.map (\login -> { model | login = login })
                 |> Return.mapCmd MsgForLogin
+
+        MsgForLinks msg ->
+            Links.update msg model.links
+                |> Return.map (\links -> { model | links = links })
+                |> Return.mapCmd MsgForLinks
 
 
 main : Program Never Model Msg
@@ -45,17 +67,28 @@ view model =
     Element.layout stylesheet <|
         column General
             [ center, width (percent 100) ]
-            [ navigation
+            [ navigation model
             , column None
                 [ width (percent 100), maxWidth (px 1200), paddingXY 40 40 ]
-                [ Element.map MsgForLogin (Login.view model.login)
+                [ case model.loggedInUser of
+                    Nothing ->
+                        Element.map MsgForLogin (Login.view model.login)
+
+                    Just user ->
+                        Links.view user model.links
                 ]
             ]
 
 
-navigation : Element Styles variation msg
-navigation =
+navigation : Model -> Element Styles variation msg
+navigation model =
     row Navigation
         [ spread, paddingXY 80 20, width (percent 100) ]
         [ el Logo [] (text "Fake News Detector Admin")
+        , case model.loggedInUser of
+            Nothing ->
+                empty
+
+            Just user ->
+                text ("Signed in as " ++ user.email)
         ]
