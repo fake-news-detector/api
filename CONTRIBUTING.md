@@ -13,6 +13,7 @@ You need to have installed:
 
 * [docker](https://www.docker.com/docker)
 * optional: rust nightly (install using [rustup](https://www.rustup.rs/))
+* optional: [elm](https://guide.elm-lang.org/install.html)
 
 ## Running
 
@@ -70,7 +71,13 @@ cd -
 Then start the app:
 
 ```
-cargo watch -x run
+cargo watch -w src -x run
+```
+
+For compiling the admin area:
+
+```
+cargo watch -w admin -s "elm-make --yes admin/Main.elm --output target/admin.js"
 ```
 
 To run the tests:

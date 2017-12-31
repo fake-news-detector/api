@@ -19,26 +19,30 @@ pub mod scrapper;
 pub mod jobs;
 
 use rocket_contrib::Template;
+use rocket::response::NamedFile;
+use std::path::{Path, PathBuf};
 
 pub fn run_job(command: &str) {
     jobs::run_job(command);
 }
 
+#[get("/<file..>")]
+fn static_files(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("target/").join(file)).ok()
+}
+
 pub fn start_server() {
     rocket::ignite()
         .manage(commons::pg_pool::init_pool())
-        .mount(
-            "/",
-            routes![
-                endpoints::healthcheck::healthcheck,
-                endpoints::categories::get_categories,
-                endpoints::votes::get_votes,
-                endpoints::votes::post_vote,
-                endpoints::links::get_all_links,
-                endpoints::index::index,
-                endpoints::admin::admin
-            ],
-        )
+        .mount("/",
+               routes![endpoints::healthcheck::healthcheck,
+                       endpoints::categories::get_categories,
+                       endpoints::votes::get_votes,
+                       endpoints::votes::post_vote,
+                       endpoints::links::get_all_links,
+                       endpoints::index::index,
+                       endpoints::admin::admin,
+                       static_files])
         .attach(Template::fairing())
         .launch();
 }
