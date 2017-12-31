@@ -22,3 +22,13 @@ pub struct LoginResponse {
 fn login(params: Json<LoginParams>) -> Json<LoginResponse> {
     Json(LoginResponse { email: params.email.to_owned() })
 }
+
+#[derive(Deserialize)]
+struct VerifyLinkParams {
+    link_id: i32,
+    category_id: Option<i32>,
+}
+#[post("/admin/verify_link", data = "<params>")]
+fn verify_link(params: Json<VerifyLinkParams>) -> Json<bool> {
+    Json(true)
+}

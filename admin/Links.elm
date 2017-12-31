@@ -4,9 +4,11 @@ import Data.Category as Category
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Html exposing (td, th, tr)
-import Html.Attributes as Attr exposing (attribute)
+import Html.Attributes as Attr
+import Html.Events as Events
 import Json.Decode as Decode exposing (..)
 import Json.Decode.Pipeline exposing (..)
+import Json.Encode as Encode exposing (..)
 import Login exposing (User)
 import RemoteData exposing (..)
 import RemoteData.Http exposing (..)
@@ -17,15 +19,27 @@ import Stylesheet exposing (..)
 type Msg
     = LoadLinks
     | LinksResponse (WebData (List Link))
+    | VerifyLink LinkId CategoryId
+    | VerifyLinkResponse (WebData ())
 
 
 type alias Model =
-    { response : WebData (List Link)
+    { linksResponse : WebData (List Link)
+    , verifyLinkResponse : WebData ()
     }
 
 
+type LinkId
+    = LinkId Int
+
+
+type CategoryId
+    = CategoryId Int
+    | NoCategory
+
+
 type alias Link =
-    { id : Int
+    { id : LinkId
     , url : Maybe String
     , title : Maybe String
     , content : Maybe String
@@ -36,13 +50,13 @@ type alias Link =
 
 init : Model
 init =
-    { response = NotAsked }
+    { linksResponse = NotAsked, verifyLinkResponse = NotAsked }
 
 
 linksDecoder : Decoder (List Link)
 linksDecoder =
     decode Link
-        |> required "id" Decode.int
+        |> required "id" (Decode.map LinkId Decode.int)
         |> required "url" (nullable Decode.string)
         |> required "title" (nullable Decode.string)
         |> required "content" (nullable Decode.string)
@@ -51,12 +65,30 @@ linksDecoder =
         |> Decode.list
 
 
-view : User -> Model -> Element Styles variation msg
+view : User -> Model -> Element Styles variation Msg
 view user model =
     column None
         []
-        [ h1 Title [ paddingBottom 30 ] (text "Flagged Links")
-        , case model.response of
+        [ row None
+            [ spread, paddingBottom 30 ]
+            [ h1 Title [] (text "Flagged Links")
+            , el None
+                [ alignBottom ]
+                (case model.verifyLinkResponse of
+                    Loading ->
+                        text "Saving..."
+
+                    Success _ ->
+                        text "✅ Saved"
+
+                    Failure _ ->
+                        text "Error"
+
+                    NotAsked ->
+                        empty
+                )
+            ]
+        , case model.linksResponse of
             Loading ->
                 text "Loading..."
 
@@ -71,7 +103,7 @@ view user model =
         ]
 
 
-linksTable : List Link -> Element Styles variation msg
+linksTable : List Link -> Element Styles variation Msg
 linksTable links =
     html <|
         Html.table
@@ -89,7 +121,7 @@ linksTable links =
             )
 
 
-linkRow : Link -> Html.Html msg
+linkRow : Link -> Html.Html Msg
 linkRow link =
     let
         title =
@@ -112,8 +144,17 @@ linkRow link =
                     ++ Category.toName category
                 )
 
+        verifyLinkEvent targetValue =
+            String.toInt targetValue
+                |> Result.map CategoryId
+                |> Result.withDefault NoCategory
+                |> VerifyLink link.id
+
         selectCategory =
-            Html.select [ Attr.style [ ( "width", "100%" ) ] ]
+            Html.select
+                [ Attr.style [ ( "width", "100%" ) ]
+                , Events.on "change" (Decode.map verifyLinkEvent Events.targetValue)
+                ]
                 ([ Html.option [ Attr.value "" ] [ Html.text "" ] ]
                     ++ List.map
                         (\id ->
@@ -135,8 +176,35 @@ update : Msg -> Model -> Return Msg Model
 update msg model =
     case msg of
         LoadLinks ->
-            return { model | response = Loading }
+            return { model | linksResponse = Loading }
                 (RemoteData.Http.get "/links/all" LinksResponse linksDecoder)
 
-        LinksResponse response ->
-            return { model | response = response } Cmd.none
+        LinksResponse linksResponse ->
+            return { model | linksResponse = linksResponse } Cmd.none
+
+        VerifyLink linkId categoryId ->
+            return { model | verifyLinkResponse = Loading }
+                (RemoteData.Http.post
+                    "/admin/verify_link"
+                    VerifyLinkResponse
+                    (Decode.succeed ())
+                    (verifyLinkEncoder linkId categoryId)
+                )
+
+        VerifyLinkResponse verifyLinkResponse ->
+            return { model | verifyLinkResponse = verifyLinkResponse } Cmd.none
+
+
+verifyLinkEncoder : LinkId -> CategoryId -> Encode.Value
+verifyLinkEncoder (LinkId linkId) categoryId =
+    Encode.object
+        [ ( "link_id", Encode.int linkId )
+        , ( "category_id"
+          , case categoryId of
+                NoCategory ->
+                    Encode.null
+
+                CategoryId categoryId ->
+                    Encode.int categoryId
+          )
+        ]

@@ -75,7 +75,7 @@ view model =
                         Element.map MsgForLogin (Login.view model.login)
 
                     Just user ->
-                        Links.view user model.links
+                        Element.map MsgForLinks (Links.view user model.links)
                 ]
             ]
 
