@@ -3,7 +3,7 @@ module Links exposing (..)
 import Data.Category as Category
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Html exposing (td, tr)
+import Html exposing (td, th, tr)
 import Html.Attributes as Attr exposing (attribute)
 import Json.Decode as Decode exposing (..)
 import Json.Decode.Pipeline exposing (..)
@@ -79,7 +79,14 @@ linksTable links =
             , Attr.attribute "cellpadding" "5"
             , Attr.attribute "width" "100%"
             ]
-            (List.map linkRow links)
+            ([ tr []
+                [ th [] [ Html.text "News Title" ]
+                , th [] [ Html.text "Popular Category" ]
+                , th [] [ Html.text "Verified Category" ]
+                ]
+             ]
+                ++ List.map linkRow links
+            )
 
 
 linkRow : Link -> Html.Html msg
@@ -98,16 +105,29 @@ linkRow link =
         category =
             Category.fromId link.categoryId
 
-        categoryText =
+        popularCategory =
             Html.text
                 (Category.toEmoji category
                     ++ " "
                     ++ Category.toName category
                 )
+
+        selectCategory =
+            Html.select [ Attr.style [ ( "width", "100%" ) ] ]
+                ([ Html.option [ Attr.value "" ] [ Html.text "" ] ]
+                    ++ List.map
+                        (\id ->
+                            Html.option
+                                [ Attr.value <| toString id ]
+                                [ Html.text (Category.toName <| Category.fromId id) ]
+                        )
+                        (List.range 1 6)
+                )
     in
     tr []
         [ td [] [ titleLink ]
-        , td [] [ categoryText ]
+        , td [] [ popularCategory ]
+        , td [] [ selectCategory ]
         ]
 
 
