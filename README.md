@@ -21,13 +21,23 @@ Response format:
 
 ### Links
 
-You can list all links and its main voted category with:
+You can list all links and their data with:
 
 `GET /links/all`
 
 Response format:
 
-`[{ id: int, url: string, title: string, content: null | string, category_id: int, count: int }]`
+```
+[{
+  id: int,
+  url: string,
+  title: string,
+  content: null | string,
+  category_id: int,
+  verified_category_id: null | string,
+  count: int
+}]
+```
 
 This endpoint is used by [Robinho](https://github.com/fake-news-detector/robinho) to fetch the links and train its classification algorithms.
 

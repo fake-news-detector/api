@@ -15,14 +15,15 @@ struct LinkWithTopVote {
     title: String,
     content: Option<String>,
     category_id: i32,
+    verified_category_id: Option<i32>,
     count: i64,
 }
 
 #[get("/links/all")]
 fn get_all_links(conn: DbConn) -> QueryResult<Json<Vec<LinkWithTopVote>>> {
-    let query = sql::<(Integer, Text, Text, Nullable<Text>, Integer, BigInt)>(
+    let query = sql::<(Integer, Text, Text, Nullable<Text>, Integer, Nullable<Integer>, BigInt)>(
         "SELECT links.id, links.url, links.title, links.content,
-            top_votes.category_id, top_votes.total
+            top_votes.category_id, links.verified_category_id, top_votes.total
          FROM links
          INNER JOIN
             (SELECT distinct on (link_id) category_id, link_id, count(category_id) total

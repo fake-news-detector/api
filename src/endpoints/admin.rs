@@ -2,6 +2,9 @@ extern crate rocket;
 extern crate rocket_contrib;
 use rocket_contrib::Json;
 use rocket_contrib::Template;
+use diesel::prelude::*;
+use data::link::*;
+use commons::pg_pool::DbConn;
 
 #[get("/admin")]
 fn admin() -> Template {
@@ -29,6 +32,6 @@ struct VerifyLinkParams {
     category_id: Option<i32>,
 }
 #[post("/admin/verify_link", data = "<params>")]
-fn verify_link(params: Json<VerifyLinkParams>) -> Json<bool> {
-    Json(true)
+fn verify_link(params: Json<VerifyLinkParams>, conn: DbConn) -> QueryResult<Json<Link>> {
+    set_verified_category_id(params.link_id, params.category_id, &*conn).map(Json)
 }

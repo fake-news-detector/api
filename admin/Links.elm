@@ -44,6 +44,7 @@ type alias Link =
     , title : Maybe String
     , content : Maybe String
     , categoryId : Int
+    , verifiedCategoryId : Maybe Int
     , count : Int
     }
 
@@ -61,6 +62,7 @@ linksDecoder =
         |> required "title" (nullable Decode.string)
         |> required "content" (nullable Decode.string)
         |> required "category_id" Decode.int
+        |> required "verified_category_id" (nullable Decode.int)
         |> required "count" Decode.int
         |> Decode.list
 
@@ -155,11 +157,18 @@ linkRow link =
                 [ Attr.style [ ( "width", "100%" ) ]
                 , Events.on "change" (Decode.map verifyLinkEvent Events.targetValue)
                 ]
-                ([ Html.option [ Attr.value "" ] [ Html.text "" ] ]
+                ([ Html.option
+                    [ Attr.value ""
+                    , Attr.selected (link.verifiedCategoryId == Nothing)
+                    ]
+                    [ Html.text "" ]
+                 ]
                     ++ List.map
                         (\id ->
                             Html.option
-                                [ Attr.value <| toString id ]
+                                [ Attr.value <| toString id
+                                , Attr.selected (link.verifiedCategoryId == Just id)
+                                ]
                                 [ Html.text (Category.toName <| Category.fromId id) ]
                         )
                         (List.range 1 6)

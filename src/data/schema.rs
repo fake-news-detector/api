@@ -13,6 +13,7 @@ table! {
         url -> Text,
         title -> Text,
         content -> Nullable<Text>,
+        verified_category_id -> Nullable<Integer>,
     }
 }
 

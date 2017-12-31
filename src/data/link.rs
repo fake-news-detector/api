@@ -13,6 +13,7 @@ pub struct Link {
     pub url: String,
     pub title: String,
     pub content: Option<String>,
+    pub verified_category_id: Option<i32>,
 }
 
 #[derive(Insertable)]
@@ -42,4 +43,15 @@ pub fn rescrape_content(link: &Link, conn: &PgConnection) -> QueryResult<Link> {
     let content = scrapper::extract_text(&link.url).to_owned();
 
     update(link).set(dsl::content.eq(content)).get_result(conn)
+}
+
+pub fn set_verified_category_id(id: i32,
+                                category_id: Option<i32>,
+                                conn: &PgConnection)
+                                -> QueryResult<Link> {
+    let link = dsl::links.filter(dsl::id.eq(id)).first::<Link>(conn)?;
+
+    update(&link)
+        .set(dsl::verified_category_id.eq(category_id))
+        .get_result(conn)
 }
