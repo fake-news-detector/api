@@ -31,7 +31,7 @@ fn get_all_links(conn: DbConn) -> QueryResult<Json<Vec<LinkWithTopVote>>> {
             GROUP by link_id, category_id
             ORDER by link_id, total DESC) AS top_votes
          ON top_votes.link_id = links.id
-         ORDER BY links.id",
+         ORDER BY links.id DESC",
     );
     query.load::<LinkWithTopVote>(&*conn).map(Json)
 }
