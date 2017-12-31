@@ -36,6 +36,7 @@ pub fn start_server() {
                 endpoints::votes::post_vote,
                 endpoints::links::get_all_links,
                 endpoints::index::index,
+                endpoints::admin::admin
             ],
         )
         .attach(Template::fairing())
