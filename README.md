@@ -3,8 +3,7 @@
 [ci-svg]: https://circleci.com/gh/fake-news-detector/api.svg?style=shield
 [ci-url]: https://circleci.com/gh/fake-news-detector/api
 
-Fake News Detector API
-=======================
+# Fake News Detector API
 
 ## JSON API endpoints
 
@@ -22,13 +21,23 @@ Response format:
 
 ### Links
 
-You can list all links and its main voted category with:
+You can list all links and their data with:
 
 `GET /links/all`
 
 Response format:
 
-`[{ id: int, url: string, title: string, content: null | string, category_id: int, count: 1 }]`
+```
+[{
+  id: int,
+  url: string,
+  title: string,
+  content: null | string,
+  category_id: int,
+  verified_category_id: null | string,
+  count: int
+}]
+```
 
 This endpoint is used by [Robinho](https://github.com/fake-news-detector/robinho) to fetch the links and train its classification algorithms.
 

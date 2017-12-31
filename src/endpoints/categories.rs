@@ -11,5 +11,9 @@ use commons::responders::*;
 
 #[get("/categories")]
 pub fn get_categories(conn: DbConn) -> QueryResult<Cached<Cors<Json<Vec<Category>>>>> {
-    categories.load::<Category>(&*conn).map(Json).map(Cors).map(Cached)
+    categories
+        .load::<Category>(&*conn)
+        .map(Json)
+        .map(Cors)
+        .map(Cached)
 }
