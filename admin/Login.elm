@@ -148,21 +148,29 @@ loginForm form =
         password =
             Form.getFieldAsString "password" form
     in
-    column None
-        []
-        [ row None
+    node "form" <|
+        column None
             []
-            [ el None [ width (px 80) ] (text "Email")
-            , html <| Html.map FormMsg (Input.textInput email [])
+            [ row None
+                []
+                [ el None [ width (px 80) ] (text "Email")
+                , html <| Html.map FormMsg (Input.textInput email [])
+                ]
+            , errorFor email
+            , row None
+                []
+                [ el None [ width (px 80) ] (text "Password")
+                , html <| Html.map FormMsg (Input.passwordInput password [])
+                ]
+            , errorFor password
+            , button None
+                [ onClickStopPropagation (FormMsg Form.Submit), width (px 200), paddingXY 0 10 ]
+                (text "Enter")
             ]
-        , errorFor email
-        , row None
-            []
-            [ el None [ width (px 80) ] (text "Password")
-            , html <| Html.map FormMsg (Input.passwordInput password [])
-            ]
-        , errorFor password
-        , button None
-            [ onClick (FormMsg Form.Submit), width (px 200), paddingXY 0 10 ]
-            (text "Enter")
-        ]
+
+
+onClickStopPropagation : msg -> Element.Attribute variation msg
+onClickStopPropagation msg =
+    onWithOptions "click"
+        { defaultOptions | stopPropagation = True, preventDefault = True }
+        (Decode.succeed msg)

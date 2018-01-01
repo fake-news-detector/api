@@ -58,7 +58,7 @@ docker-compose up database
 Install the rust and js dependencies:
 
 ```
-cargo install
+cargo build
 cd src/scrapper/
 npm install
 cd -
