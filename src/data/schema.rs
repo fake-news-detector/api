@@ -25,3 +25,12 @@ table! {
         ip -> Text,
     }
 }
+
+table! {
+    hoaxes {
+        id -> Integer,
+        content -> Text,
+        uuid -> Text,
+        ip -> Text,
+    }
+}
