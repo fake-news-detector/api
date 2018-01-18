@@ -90,6 +90,14 @@ Response format:
 
 `{ id: int, content: string, uuid: string, ip: string }`
 
+You can list all hoaxes and their data with:
+
+`GET /hoaxes/all`
+
+Response format:
+
+`[{ id: int, content: string }]`
+
 # Contributing
 
 If you want to help the project, you can fork it and run on your machine, for more details, read the [CONTRIBUTING.md](https://github.com/fake-news-detector/api/blob/master/CONTRIBUTING.md) guide.
