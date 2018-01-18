@@ -117,7 +117,7 @@ If you want to learn more how it works, read about deploying to heroku with dock
 
 ## Jobs
 
-There are some jobs for helping administrating the app, for creating and running migrations, check out [diesel's docummentation](http://diesel.rs/).
+There are some jobs for helping administrating the app, for creating and running migrations, check out [diesel's docummentation](http://diesel.rs/). If you are running any diesel's job outside docker, you have to `export DATABASE_URL=postgres://postgres:password@localhost:5432/fakenews`.
 
 Custom jobs are added on the `src/jobs.rs` file, and ran like this:
 

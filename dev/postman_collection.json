@@ -1,21 +1,23 @@
 {
 	"info": {
 		"name": "Fake News Detector API",
-		"_postman_id": "b15e16d5-3ad8-10b8-32b1-59259291dd24",
+		"_postman_id": "16cf0daa-53ec-31d1-1035-ef2108ac26cd",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "localhost",
-			"description": "",
 			"item": [
 				{
 					"name": "GET /votes",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "http://localhost:8000/votes?url=http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html&title=Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo",
 							"protocol": "http",
@@ -38,8 +40,7 @@
 									"equals": true
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -67,8 +68,7 @@
 							"path": [
 								"vote"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -77,7 +77,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "http://localhost:8000/links/all",
 							"protocol": "http",
@@ -89,8 +92,35 @@
 								"links",
 								"all"
 							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /hoax",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"uuid\": \"123\",\n\t\"content\": \"Você está sabendo que:\\nA partir de amanhã, em todo o mundo, existem novas regras\\nde comunição, todos os govemos da Europa, América do\\nNone e América do Sul chegaram em acordo com a\\nWhatsapp, Twiter, Facebook e outros canais de comunicação\\nTodas as chamadas serao gravadas. Todos os registros de\\nchamadas telefonicas sao gravados.Todas as mensagens e\\nchamadas WhatsApp são gravadas. O Twitter é monitorado.\\nNO BRASIL O STF AUTORIZOU O MONITORAMENTO.\\nO Facebook é monitorado. Todas as midias e fóruns sociais\\nsac monitorados. Por favor, infonne aqueles que não sabem.\\nTodos os dispositivos estão conectados aos sistemas\\ndepartamentais do Governo Federal e dos governos do\\nmundo. TAL AÇÃO É PARA MONITORAR o CRIME\\nORGANIZADO, E TERRORISMO. Tenha cuidado para não\\nenviar mensagens ou informações desnecessárias que\\nsejam contrarias aos governos, leis e moralidade. Evite dizer\\ninformações sensíveis ou sensíveis aos seus amigos e\\nfamiliares. Diga aos seus ﬁlhos e tenha muito cuidado!\\nE muito importante transmitir esta mensagem hoje. Porque a\\npartir de amanhã ja existe uma outra forma de vigilancia em\\ntodos os paises do mundo. Incrível mas certo. Envie-o\\napenas hoje a todos os seus entes\\nqueridos e amigos. Tudo o que vocé escreve ou fala pode\\nser usado contra vocé e não uma piada é uma realidade!!!\\nRepassem urgente!👈\"\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://localhost:8000/hoax",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"hoax"
+							]
+						}
 					},
 					"response": []
 				}
@@ -98,7 +128,6 @@
 		},
 		{
 			"name": "production",
-			"description": "",
 			"item": [
 				{
 					"name": "GET /votes",
@@ -108,11 +137,11 @@
 						"body": {},
 						"url": {
 							"raw": "https://api.fakenewsdetector.org/votes?url=http://www.imprensaviva.com/2017/10/qualquer-jornalista-que-defenda.html&title=Qualquer jornalista que defenda candidatura de Luciano Huck merece desprezo. Canalhas querem o país nas mãos da Globo",
-							"protocol": "http",
+							"protocol": "https",
 							"host": [
-								"fake-news-detector-api",
-								"herokuapp",
-								"com"
+								"api",
+								"fakenewsdetector",
+								"org"
 							],
 							"path": [
 								"votes"
@@ -129,8 +158,7 @@
 									"equals": true
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -150,17 +178,16 @@
 						},
 						"url": {
 							"raw": "https://api.fakenewsdetector.org/vote",
-							"protocol": "http",
+							"protocol": "https",
 							"host": [
-								"fake-news-detector-api",
-								"herokuapp",
-								"com"
+								"api",
+								"fakenewsdetector",
+								"org"
 							],
 							"path": [
 								"vote"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -172,18 +199,46 @@
 						"body": {},
 						"url": {
 							"raw": "https://api.fakenewsdetector.org/links/all",
-							"protocol": "http",
+							"protocol": "https",
 							"host": [
-								"fake-news-detector-api",
-								"herokuapp",
-								"com"
+								"api",
+								"fakenewsdetector",
+								"org"
 							],
 							"path": [
 								"links",
 								"all"
 							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /hoax",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"uuid\": \"123\",\n\t\"content\": \"Você está sabendo que:\\nA partir de amanhã, em todo o mundo, existem novas regras\\nde comunição, todos os govemos da Europa, América do\\nNone e América do Sul chegaram em acordo com a\\nWhatsapp, Twiter, Facebook e outros canais de comunicação\\nTodas as chamadas serao gravadas. Todos os registros de\\nchamadas telefonicas sao gravados.Todas as mensagens e\\nchamadas WhatsApp são gravadas. O Twitter é monitorado.\\nNO BRASIL O STF AUTORIZOU O MONITORAMENTO.\\nO Facebook é monitorado. Todas as midias e fóruns sociais\\nsac monitorados. Por favor, infonne aqueles que não sabem.\\nTodos os dispositivos estão conectados aos sistemas\\ndepartamentais do Governo Federal e dos governos do\\nmundo. TAL AÇÃO É PARA MONITORAR o CRIME\\nORGANIZADO, E TERRORISMO. Tenha cuidado para não\\nenviar mensagens ou informações desnecessárias que\\nsejam contrarias aos governos, leis e moralidade. Evite dizer\\ninformações sensíveis ou sensíveis aos seus amigos e\\nfamiliares. Diga aos seus ﬁlhos e tenha muito cuidado!\\nE muito importante transmitir esta mensagem hoje. Porque a\\npartir de amanhã ja existe uma outra forma de vigilancia em\\ntodos os paises do mundo. Incrível mas certo. Envie-o\\napenas hoje a todos os seus entes\\nqueridos e amigos. Tudo o que vocé escreve ou fala pode\\nser usado contra vocé e não uma piada é uma realidade!!!\\nRepassem urgente!👈\"\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "https://api.fakenewsdetector.org/hoax",
+							"protocol": "https",
+							"host": [
+								"api",
+								"fakenewsdetector",
+								"org"
+							],
+							"path": [
+								"hoax"
+							]
+						}
 					},
 					"response": []
 				}

@@ -34,19 +34,25 @@ fn static_files(file: PathBuf) -> Option<NamedFile> {
 pub fn start_server() {
     rocket::ignite()
         .manage(commons::pg_pool::init_pool())
-        .mount("/",
-               routes![endpoints::healthcheck::healthcheck,
-                       endpoints::categories::get_categories,
-                       endpoints::votes::get_votes,
-                       endpoints::votes::post_vote,
-                       endpoints::links::get_all_links,
-                       endpoints::index::index,
-                       endpoints::admin::admin,
-                       endpoints::admin::login,
-                       endpoints::admin::get_login,
-                       endpoints::admin::logout,
-                       endpoints::admin::verify_link,
-                       static_files])
+        .mount(
+            "/",
+            routes![
+                endpoints::healthcheck::healthcheck,
+                endpoints::categories::get_categories,
+                endpoints::votes::get_votes,
+                endpoints::votes::post_vote,
+                endpoints::links::get_all_links,
+                endpoints::hoaxes::post_hoax,
+                endpoints::hoaxes::get_all_hoaxes,
+                endpoints::index::index,
+                endpoints::admin::admin,
+                endpoints::admin::login,
+                endpoints::admin::get_login,
+                endpoints::admin::logout,
+                endpoints::admin::verify_link,
+                static_files,
+            ],
+        )
         .attach(Template::fairing())
         .launch();
 }
