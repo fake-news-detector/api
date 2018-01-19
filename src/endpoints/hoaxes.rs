@@ -25,10 +25,10 @@ fn post_hoax(
     params: Json<PostHoax>,
     conn: DbConn,
     remote_ip: RemoteIp,
-) -> QueryResult<Cors<Json<hoax::Hoax>>> {
-    hoax::create(&params.content, &params.uuid, &remote_ip.ip, &*conn)
-        .map(Json)
-        .map(Cors)
+) -> Cors<QueryResult<Json<hoax::Hoax>>> {
+    Cors(
+        hoax::create(&params.content, &params.uuid, &remote_ip.ip, &*conn).map(Json),
+    )
 }
 
 #[options("/hoax")]

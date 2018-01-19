@@ -64,7 +64,7 @@ fn post_vote(
     params: Json<PostVote>,
     conn: DbConn,
     remote_ip: RemoteIp,
-) -> Result<Cors<Json<Vote>>, status::Custom<String>> {
+) -> Cors<Result<Json<Vote>, status::Custom<String>>> {
     let link = find_or_create(&params.url, &params.title, &*conn);
 
     let insert_query = link.and_then(|l| {
@@ -77,7 +77,7 @@ fn post_vote(
         diesel::insert(&new_vote).into(votes).get_result(&*conn)
     });
 
-    match insert_query {
+    let result = match insert_query {
         Ok(vote) => Ok(Json(vote)),
         Err(DatabaseError(UniqueViolation, _)) => Err(status::Custom(
             Status::BadRequest,
@@ -87,7 +87,9 @@ fn post_vote(
             Status::InternalServerError,
             String::from("Internal Server Error"),
         )),
-    }.map(Cors)
+    };
+
+    Cors(result)
 }
 
 #[options("/vote")]
