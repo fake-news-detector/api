@@ -30,7 +30,10 @@ pub struct GetVotesResponse {
 }
 
 #[get("/votes?<params>")]
-fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Cached<Cors<Json<GetVotesResponse>>>> {
+fn get_votes(
+    params: GetVotesParams,
+    conn: DbConn,
+) -> QueryResult<Cached<Cors<Json<GetVotesResponse>>>> {
     let mut robinho_votes = vec![];
     let mut people_votes = vec![];
 
@@ -83,6 +86,11 @@ fn post_vote(
         Err(_) => Err(status::Custom(
             Status::InternalServerError,
             String::from("Internal Server Error"),
-        ))
+        )),
     }.map(Cors)
+}
+
+#[options("/vote")]
+fn post_vote_preflight() -> PreflightCors<()> {
+    PreflightCors(())
 }

@@ -31,6 +31,11 @@ fn post_hoax(
         .map(Cors)
 }
 
+#[options("/hoax")]
+fn post_hoax_preflight() -> PreflightCors<()> {
+    PreflightCors(())
+}
+
 #[derive(Queryable, Serialize, Deserialize)]
 struct HoaxData {
     id: i32,
