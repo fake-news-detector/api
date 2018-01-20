@@ -78,6 +78,16 @@ The votes endpoints are used by the [Fake News Extension](https://github.com/fak
 
 The hoaxes are pieces of text which are usually a chain message containing fake news or hoaxes in general and shared on Whatsapp or other texting apps.
 
+To check if a text is a hoax, use this endpoint:
+
+`GET /hoax/check?content=string`
+
+Response format:
+
+```
+[{ category_id: int, chance: float }]
+```
+
 To insert a new hoax, use this call:
 
 `POST /hoax`

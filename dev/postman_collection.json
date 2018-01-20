@@ -97,6 +97,34 @@
 					"response": []
 				},
 				{
+					"name": "GET /hoax/check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8000/hoax/check?content=Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"hoax",
+								"check"
+							],
+							"query": [
+								{
+									"key": "content",
+									"value": "Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST /hoax",
 					"request": {
 						"method": "POST",
@@ -119,6 +147,27 @@
 							"port": "8000",
 							"path": [
 								"hoax"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /hoaxes/all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:8000/hoaxes/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"hoaxes",
+								"all"
 							]
 						}
 					},
@@ -214,6 +263,35 @@
 					"response": []
 				},
 				{
+					"name": "GET /hoax/check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://api.fakenewsdetector.org/hoax/check?content=Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
+							"protocol": "http",
+							"host": [
+								"api",
+								"fakenewsdetector",
+								"org"
+							],
+							"path": [
+								"hoax",
+								"check"
+							],
+							"query": [
+								{
+									"key": "content",
+									"value": "Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST /hoax",
 					"request": {
 						"method": "POST",
@@ -237,6 +315,28 @@
 							],
 							"path": [
 								"hoax"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /hoaxes/all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "https://api.fakenewsdetector.org/hoaxes/all",
+							"protocol": "https",
+							"host": [
+								"api",
+								"fakenewsdetector",
+								"org"
+							],
+							"path": [
+								"hoaxes",
+								"all"
 							]
 						}
 					},

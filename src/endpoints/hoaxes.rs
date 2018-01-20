@@ -11,8 +11,19 @@ use commons::remote_ip::RemoteIp;
 use data::hoax;
 use commons::responders::*;
 use diesel::types::{Text, Integer};
+use data::vote::*;
 
+#[derive(FromForm)]
+pub struct CheckHoaxParams {
+    content: String,
+}
 
+#[get("/hoax/check?<params>")]
+fn get_hoax_check(params: CheckHoaxParams) -> Cached<Cors<Json<Vec<RobotVote>>>> {
+    let robinho_votes = get_robinho_prediction(&String::from(""), &params.content).predictions;
+
+    Cached(Cors(Json(robinho_votes)))
+}
 
 #[derive(Deserialize)]
 struct PostHoax {

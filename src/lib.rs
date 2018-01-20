@@ -43,6 +43,7 @@ pub fn start_server() {
                 endpoints::votes::post_vote,
                 endpoints::votes::post_vote_preflight,
                 endpoints::links::get_all_links,
+                endpoints::hoaxes::get_hoax_check,
                 endpoints::hoaxes::post_hoax,
                 endpoints::hoaxes::post_hoax_preflight,
                 endpoints::hoaxes::get_all_hoaxes,
