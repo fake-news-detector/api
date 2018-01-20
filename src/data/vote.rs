@@ -8,6 +8,7 @@ use data::schema::votes;
 use data::link::Link;
 use diesel::types::{BigInt, Integer};
 use data::verified_list;
+use scrapper::scrapper;
 
 #[derive(Serialize, Deserialize, Identifiable, Queryable, Associations)]
 #[belongs_to(Link, Category)]
@@ -45,13 +46,21 @@ pub struct VerifiedVote {
     pub category_id: i32,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct AllVotes {
+    verified: Option<VerifiedVote>,
+    robot: Vec<RobotVote>,
+    people: Vec<PeopleVote>,
+}
+
 #[derive(Deserialize)]
 pub struct RobinhoResponse {
     pub predictions: Vec<RobotVote>,
 }
 
 pub fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
-    let mut prediction_url = reqwest::Url::parse("https://robinho.fakenewsdetector.org/predict").unwrap();
+    let mut prediction_url = reqwest::Url::parse("https://robinho.fakenewsdetector.org/predict")
+        .unwrap();
     prediction_url.query_pairs_mut().append_pair("title", title);
     prediction_url.query_pairs_mut().append_pair(
         "content",
@@ -82,4 +91,31 @@ pub fn get_people_votes(url: &str, conn: &PgConnection) -> QueryResult<Vec<Peopl
 
 pub fn get_verified_category(url: &str) -> Option<VerifiedVote> {
     verified_list::get_category(&url).map(|cid| VerifiedVote { category_id: cid })
+}
+
+pub fn get_all_votes(
+    url: &str,
+    title: &str,
+    content: Option<&str>,
+    conn: &PgConnection,
+) -> QueryResult<AllVotes> {
+    let mut robinho_votes = vec![];
+    let mut people_votes = vec![];
+
+    let verified = get_verified_category(&url);
+    if verified.is_none() {
+        let content_ = match content {
+            Some(text) => String::from(text),
+            None => scrapper::extract_text(&url).unwrap_or(String::from("")),
+        };
+
+        robinho_votes = get_robinho_prediction(&title, &content_).predictions;
+        people_votes = get_people_votes(&url, &*conn)?;
+    }
+
+    Ok(AllVotes {
+        verified: verified,
+        robot: robinho_votes,
+        people: people_votes,
+    })
 }

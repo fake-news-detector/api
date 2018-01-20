@@ -97,77 +97,27 @@
 					"response": []
 				},
 				{
-					"name": "GET /hoax/check",
+					"name": "GET /votes_by_content",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:8000/hoax/check?content=Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
+							"raw": "http://localhost:8000/votes_by_content?content=Chora Bandidagem Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8000",
 							"path": [
-								"hoax",
-								"check"
+								"votes_by_content"
 							],
 							"query": [
 								{
 									"key": "content",
-									"value": "Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
+									"value": "Chora Bandidagem Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
 									"equals": true
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "POST /hoax",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"uuid\": \"123\",\n\t\"content\": \"Você está sabendo que:\\nA partir de amanhã, em todo o mundo, existem novas regras\\nde comunição, todos os govemos da Europa, América do\\nNone e América do Sul chegaram em acordo com a\\nWhatsapp, Twiter, Facebook e outros canais de comunicação\\nTodas as chamadas serao gravadas. Todos os registros de\\nchamadas telefonicas sao gravados.Todas as mensagens e\\nchamadas WhatsApp são gravadas. O Twitter é monitorado.\\nNO BRASIL O STF AUTORIZOU O MONITORAMENTO.\\nO Facebook é monitorado. Todas as midias e fóruns sociais\\nsac monitorados. Por favor, infonne aqueles que não sabem.\\nTodos os dispositivos estão conectados aos sistemas\\ndepartamentais do Governo Federal e dos governos do\\nmundo. TAL AÇÃO É PARA MONITORAR o CRIME\\nORGANIZADO, E TERRORISMO. Tenha cuidado para não\\nenviar mensagens ou informações desnecessárias que\\nsejam contrarias aos governos, leis e moralidade. Evite dizer\\ninformações sensíveis ou sensíveis aos seus amigos e\\nfamiliares. Diga aos seus ﬁlhos e tenha muito cuidado!\\nE muito importante transmitir esta mensagem hoje. Porque a\\npartir de amanhã ja existe uma outra forma de vigilancia em\\ntodos os paises do mundo. Incrível mas certo. Envie-o\\napenas hoje a todos os seus entes\\nqueridos e amigos. Tudo o que vocé escreve ou fala pode\\nser usado contra vocé e não uma piada é uma realidade!!!\\nRepassem urgente!👈\"\n}"
-						},
-						"url": {
-							"raw": "http://localhost:8000/hoax",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8000",
-							"path": [
-								"hoax"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET /hoaxes/all",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http://localhost:8000/hoaxes/all",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8000",
-							"path": [
-								"hoaxes",
-								"all"
 							]
 						}
 					},
@@ -263,22 +213,21 @@
 					"response": []
 				},
 				{
-					"name": "GET /hoax/check",
+					"name": "GET /votes_by_content",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://api.fakenewsdetector.org/hoax/check?content=Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
-							"protocol": "http",
+							"raw": "https://api.fakenewsdetector.org/votes_by_content?content=Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
+							"protocol": "https",
 							"host": [
 								"api",
 								"fakenewsdetector",
 								"org"
 							],
 							"path": [
-								"hoax",
-								"check"
+								"votes_by_content"
 							],
 							"query": [
 								{
@@ -286,57 +235,6 @@
 									"value": "Chora turma dos direitos humanos. Michel Temer acaba de sancionar",
 									"equals": true
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "POST /hoax",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"uuid\": \"123\",\n\t\"content\": \"Você está sabendo que:\\nA partir de amanhã, em todo o mundo, existem novas regras\\nde comunição, todos os govemos da Europa, América do\\nNone e América do Sul chegaram em acordo com a\\nWhatsapp, Twiter, Facebook e outros canais de comunicação\\nTodas as chamadas serao gravadas. Todos os registros de\\nchamadas telefonicas sao gravados.Todas as mensagens e\\nchamadas WhatsApp são gravadas. O Twitter é monitorado.\\nNO BRASIL O STF AUTORIZOU O MONITORAMENTO.\\nO Facebook é monitorado. Todas as midias e fóruns sociais\\nsac monitorados. Por favor, infonne aqueles que não sabem.\\nTodos os dispositivos estão conectados aos sistemas\\ndepartamentais do Governo Federal e dos governos do\\nmundo. TAL AÇÃO É PARA MONITORAR o CRIME\\nORGANIZADO, E TERRORISMO. Tenha cuidado para não\\nenviar mensagens ou informações desnecessárias que\\nsejam contrarias aos governos, leis e moralidade. Evite dizer\\ninformações sensíveis ou sensíveis aos seus amigos e\\nfamiliares. Diga aos seus ﬁlhos e tenha muito cuidado!\\nE muito importante transmitir esta mensagem hoje. Porque a\\npartir de amanhã ja existe uma outra forma de vigilancia em\\ntodos os paises do mundo. Incrível mas certo. Envie-o\\napenas hoje a todos os seus entes\\nqueridos e amigos. Tudo o que vocé escreve ou fala pode\\nser usado contra vocé e não uma piada é uma realidade!!!\\nRepassem urgente!👈\"\n}"
-						},
-						"url": {
-							"raw": "https://api.fakenewsdetector.org/hoax",
-							"protocol": "https",
-							"host": [
-								"api",
-								"fakenewsdetector",
-								"org"
-							],
-							"path": [
-								"hoax"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET /hoaxes/all",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "https://api.fakenewsdetector.org/hoaxes/all",
-							"protocol": "https",
-							"host": [
-								"api",
-								"fakenewsdetector",
-								"org"
-							],
-							"path": [
-								"hoaxes",
-								"all"
 							]
 						}
 					},

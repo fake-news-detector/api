@@ -10,6 +10,9 @@ extern crate diesel_codegen;
 extern crate serde_derive;
 extern crate rocket;
 extern crate rocket_contrib;
+extern crate select;
+extern crate md5;
+
 use rocket_contrib::Template;
 
 fn main() {

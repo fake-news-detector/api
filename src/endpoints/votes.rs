@@ -2,6 +2,7 @@ extern crate diesel;
 extern crate reqwest;
 extern crate rocket;
 extern crate rocket_contrib;
+extern crate md5;
 
 use rocket_contrib::Json;
 use diesel::prelude::*;
@@ -14,7 +15,6 @@ use diesel::result::Error::*;
 use diesel::result::DatabaseErrorKind::*;
 use data::vote::*;
 use data::link::*;
-use scrapper::scrapper;
 use commons::responders::*;
 
 #[derive(FromForm)]
@@ -22,33 +22,29 @@ pub struct GetVotesParams {
     url: String,
     title: String,
 }
-#[derive(Serialize, Deserialize)]
-pub struct GetVotesResponse {
-    verified: Option<VerifiedVote>,
-    robot: Vec<RobotVote>,
-    people: Vec<PeopleVote>,
-}
 
 #[get("/votes?<params>")]
-fn get_votes(
-    params: GetVotesParams,
+fn get_votes(params: GetVotesParams, conn: DbConn) -> QueryResult<Cached<Cors<Json<AllVotes>>>> {
+    let all_votes = get_all_votes(&params.url, &params.title, None, &*conn)?;
+
+    Ok(Cached(Cors(Json(all_votes))))
+}
+
+#[derive(FromForm)]
+pub struct GetVotesByContentParams {
+    content: String,
+}
+
+#[get("/votes_by_content?<params>")]
+fn get_votes_by_content(
+    params: GetVotesByContentParams,
     conn: DbConn,
-) -> QueryResult<Cached<Cors<Json<GetVotesResponse>>>> {
-    let mut robinho_votes = vec![];
-    let mut people_votes = vec![];
+) -> QueryResult<Cached<Cors<Json<AllVotes>>>> {
+    let url = format!("{:x}", md5::compute(&params.content));
 
-    let verified = get_verified_category(&params.url);
-    if verified.is_none() {
-        let content = scrapper::extract_text(&params.url).unwrap_or(String::from(""));
-        robinho_votes = get_robinho_prediction(&params.title, &content).predictions;
-        people_votes = get_people_votes(&params.url, &*conn)?;
-    }
+    let all_votes = get_all_votes(&url, &String::from(""), Some(&params.content), &*conn)?;
 
-    Ok(Cached(Cors(Json(GetVotesResponse {
-        verified: verified,
-        robot: robinho_votes,
-        people: people_votes,
-    }))))
+    Ok(Cached(Cors(Json(all_votes))))
 }
 
 #[derive(Deserialize)]

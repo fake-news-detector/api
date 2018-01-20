@@ -11,6 +11,7 @@ extern crate serde_derive;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate select;
+extern crate md5;
 
 pub mod data;
 pub mod endpoints;
@@ -40,13 +41,10 @@ pub fn start_server() {
                 endpoints::healthcheck::healthcheck,
                 endpoints::categories::get_categories,
                 endpoints::votes::get_votes,
+                endpoints::votes::get_votes_by_content,
                 endpoints::votes::post_vote,
                 endpoints::votes::post_vote_preflight,
                 endpoints::links::get_all_links,
-                endpoints::hoaxes::get_hoax_check,
-                endpoints::hoaxes::post_hoax,
-                endpoints::hoaxes::post_hoax_preflight,
-                endpoints::hoaxes::get_all_hoaxes,
                 endpoints::index::index,
                 endpoints::admin::admin,
                 endpoints::admin::login,

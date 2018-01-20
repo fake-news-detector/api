@@ -232,6 +232,7 @@ version = "0.1.0"
 dependencies = [
  "diesel 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel_codegen 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "md5 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2-diesel 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "reqwest 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -522,6 +523,11 @@ dependencies = [
 [[package]]
 name = "matches"
 version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "md5"
+version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -1443,6 +1449,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum mac 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "c41e0c4fef86961ac6d6f8a82609f55f31b05e4fce149ac5710e439df7619ba4"
 "checksum markup5ever 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "ff834ac7123c6a37826747e5ca09db41fd7a83126792021c2e636ad174bb77d3"
 "checksum matches 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "100aabe6b8ff4e4a7e32c1c13523379802df0772b82466207ac25b013f193376"
+"checksum md5 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)" = "b6d9aab58e540f50b59d5cfa7f0da4c3d437476890e1e0b6206e230dce55a23c"
 "checksum memchr 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "148fab2e51b4f1cfc66da2a7c32981d1d3c083a803978268bb11fe4b86925e7a"
 "checksum memchr 2.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "796fba70e76612589ed2ce7f45282f5af869e0fdd7cc6199fa1aa1f1d591ba9d"
 "checksum mime 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "ba626b8a6de5da682e1caa06bdb42a335aee5a84db8e5046a3e8ab17ba0a3ae0"

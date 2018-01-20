@@ -47,6 +47,10 @@ You can get all votes to a specific link with:
 
 `GET /votes?url=string&title=string`
 
+or, if you only have the text content but not a link (like hoaxes from Whatsapp):
+
+`GET /votes_by_content?content=string`
+
 Response format:
 
 ```
@@ -73,40 +77,6 @@ Response format:
 `{ link_id: int, category_id: int, uuid: string, ip: string }`
 
 The votes endpoints are used by the [Fake News Extension](https://github.com/fake-news-detector/extension).
-
-### Hoaxes
-
-The hoaxes are pieces of text which are usually a chain message containing fake news or hoaxes in general and shared on Whatsapp or other texting apps.
-
-To check if a text is a hoax, use this endpoint:
-
-`GET /hoax/check?content=string`
-
-Response format:
-
-```
-[{ category_id: int, chance: float }]
-```
-
-To insert a new hoax, use this call:
-
-`POST /hoax`
-
-Parameters:
-
-`{ uuid: string, content: string }`
-
-Response format:
-
-`{ id: int, content: string, uuid: string, ip: string }`
-
-You can list all hoaxes and their data with:
-
-`GET /hoaxes/all`
-
-Response format:
-
-`[{ id: int, content: string }]`
 
 # Contributing
 
