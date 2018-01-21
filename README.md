@@ -72,11 +72,19 @@ Parameters:
 
 `{ uuid: string, url: string, title: string, category_id: int }`
 
+Or, if you only have the text of a hoax to insert, use:
+
+`POST /vote_by_content`
+
+Parameters:
+
+`{ uuid: string, content: string, category_id: int }`
+
 Response format:
 
 `{ link_id: int, category_id: int, uuid: string, ip: string }`
 
-The votes endpoints are used by the [Fake News Extension](https://github.com/fake-news-detector/extension).
+The votes endpoints are used by the [Fake News Extension](https://github.com/fake-news-detector/extension) and the [Fake News Website](https://github.com/fake-news-detector/site).
 
 # Contributing
 

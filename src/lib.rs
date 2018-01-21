@@ -44,6 +44,8 @@ pub fn start_server() {
                 endpoints::votes::get_votes_by_content,
                 endpoints::votes::post_vote,
                 endpoints::votes::post_vote_preflight,
+                endpoints::votes::post_vote_by_content,
+                endpoints::votes::post_vote_by_content_preflight,
                 endpoints::links::get_all_links,
                 endpoints::index::index,
                 endpoints::admin::admin,
