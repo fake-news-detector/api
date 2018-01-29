@@ -42,9 +42,10 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
 }
 
 #[post("/admin/login", data = "<params>")]
-fn login(mut cookies: Cookies,
-         params: Json<LoginParams>)
-         -> Result<Json<User>, status::Custom<String>> {
+fn login(
+    mut cookies: Cookies,
+    params: Json<LoginParams>,
+) -> Result<Json<User>, status::Custom<String>> {
 
     let admin_email = env::var("ADMIN_EMAIL").unwrap_or(String::from("admin@fakenewsdetector.org"));
     let admin_password = env::var("ADMIN_PASSWORD").unwrap_or(String::from("123"));
@@ -53,7 +54,10 @@ fn login(mut cookies: Cookies,
         cookies.add_private(Cookie::new("user_email", params.email.to_owned()));
         return Ok(Json(User { email: params.email.to_owned() }));
     }
-    Err(status::Custom(Status::Forbidden, String::from("Invalid email or password")))
+    Err(status::Custom(
+        Status::Forbidden,
+        String::from("Invalid email or password"),
+    ))
 }
 
 #[get("/admin/login")]
@@ -73,9 +77,10 @@ struct VerifyLinkParams {
     category_id: Option<i32>,
 }
 #[post("/admin/verify_link", data = "<params>")]
-fn verify_link(_user: User,
-               params: Json<VerifyLinkParams>,
-               conn: DbConn)
-               -> QueryResult<Json<Link>> {
+fn verify_link(
+    _user: User,
+    params: Json<VerifyLinkParams>,
+    conn: DbConn,
+) -> QueryResult<Json<Link>> {
     set_verified_category_id(params.link_id, params.category_id, &*conn).map(Json)
 }

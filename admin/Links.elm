@@ -114,7 +114,7 @@ linksTable links =
             , Attr.attribute "width" "100%"
             ]
             ([ tr []
-                [ th [] [ Html.text "News Title" ]
+                [ th [] [ Html.text "Title or Content" ]
                 , th [] [ Html.text "Popular Category" ]
                 , th [] [ Html.text "Verified Category" ]
                 ]
@@ -126,15 +126,18 @@ linksTable links =
 linkRow : Link -> Html.Html Msg
 linkRow link =
     let
-        title =
-            Html.text <| Maybe.withDefault "" link.title
-
         titleLink =
-            Html.a
-                [ Attr.href (Maybe.withDefault "" link.url)
-                , Attr.target "_blank"
-                ]
-                [ title ]
+            if String.contains "http" (Maybe.withDefault "" link.url) then
+                Html.a
+                    [ Attr.href (Maybe.withDefault "" link.url)
+                    , Attr.target "_blank"
+                    ]
+                    [ Html.text <| Maybe.withDefault "" link.title ]
+            else
+                Html.div
+                    [ Attr.style [ ( "max-height", "50px" ), ( "overflow-y", "scroll" ) ]
+                    ]
+                    [ Html.text <| Maybe.withDefault "" link.content ]
 
         category =
             Category.fromId link.categoryId
