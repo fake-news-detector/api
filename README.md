@@ -57,12 +57,15 @@ Response format:
 {
   verified: null | { category_id: int },
   robot: [{ category_id: int, chance: float }],
-  people: [{ category_id: int, count: int }]
+  people: [{ category_id: int, count: int }],
+  keywords: [ string ]
 }
 ```
 
 The `verified` key is only present if the given url is listed on one of our [manually verified links](https://github.com/fake-news-detector/api/blob/master/src/data/verified_list.rs).
 When present, this value should be used over robot and people's guesses.
+
+The `keywords` are extracted from the title and content to be used later for automatic googling for the users to fact-check themselves.
 
 To insert a new vote, use this call:
 

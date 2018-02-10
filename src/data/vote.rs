@@ -51,11 +51,13 @@ pub struct AllVotes {
     verified: Option<VerifiedVote>,
     robot: Vec<RobotVote>,
     people: Vec<PeopleVote>,
+    keywords: Vec<String>,
 }
 
 #[derive(Deserialize)]
 pub struct RobinhoResponse {
     pub predictions: Vec<RobotVote>,
+    pub keywords: Vec<String>,
 }
 
 pub fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
@@ -69,7 +71,10 @@ pub fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
 
     reqwest::get(prediction_url)
         .and_then(|mut r| r.json())
-        .unwrap_or(RobinhoResponse { predictions: Vec::new() })
+        .unwrap_or(RobinhoResponse {
+            predictions: Vec::new(),
+            keywords: Vec::new(),
+        })
 }
 
 pub fn get_people_votes(url: &str, conn: &PgConnection) -> QueryResult<Vec<PeopleVote>> {
@@ -101,6 +106,7 @@ pub fn get_all_votes(
 ) -> QueryResult<AllVotes> {
     let mut robinho_votes = vec![];
     let mut people_votes = vec![];
+    let mut keywords = vec![];
 
     let verified = get_verified_category(&url);
     if verified.is_none() {
@@ -109,7 +115,9 @@ pub fn get_all_votes(
             None => scrapper::extract_text(&url).unwrap_or(String::from("")),
         };
 
-        robinho_votes = get_robinho_prediction(&title, &content_).predictions;
+        let robinho_response = get_robinho_prediction(&title, &content_);
+        robinho_votes = robinho_response.predictions;
+        keywords = robinho_response.keywords;
         people_votes = get_people_votes(&url, &*conn)?;
     }
 
@@ -117,5 +125,6 @@ pub fn get_all_votes(
         verified: verified,
         robot: robinho_votes,
         people: people_votes,
+        keywords: keywords,
     })
 }
