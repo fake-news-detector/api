@@ -73,7 +73,7 @@ To insert a new vote, use this call:
 
 Parameters:
 
-`{ uuid: string, url: string, title: string, category_id: int }`
+`{ uuid: string, url: string, title: string, category_id: int, clickbait_title: null | bool }`
 
 Or, if you only have the text of a hoax to insert, use:
 

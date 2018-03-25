@@ -23,14 +23,6 @@ table! {
         uuid -> Text,
         category_id -> Integer,
         ip -> Text,
-    }
-}
-
-table! {
-    hoaxes {
-        id -> Integer,
-        content -> Text,
-        uuid -> Text,
-        ip -> Text,
+        clickbait_title -> Nullable<Bool>,
     }
 }

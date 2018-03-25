@@ -18,6 +18,7 @@ pub struct Vote {
     pub uuid: String,
     pub category_id: i32,
     pub ip: String,
+    pub clickbait_title: Option<bool>,
 }
 
 #[derive(Insertable)]
@@ -27,6 +28,7 @@ pub struct NewVote<'a> {
     pub uuid: &'a str,
     pub category_id: i32,
     pub ip: &'a str,
+    pub clickbait_title: Option<bool>,
 }
 
 #[derive(Queryable, Serialize, Deserialize)]

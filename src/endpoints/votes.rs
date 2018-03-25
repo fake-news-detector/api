@@ -53,6 +53,7 @@ struct PostVote {
     url: String,
     title: String,
     category_id: i32,
+    clickbait_title: Option<bool>,
 }
 
 #[post("/vote", data = "<params>")]
@@ -61,12 +62,18 @@ fn post_vote(
     conn: DbConn,
     remote_ip: RemoteIp,
 ) -> Cors<Result<Json<Vote>, status::Custom<String>>> {
+    let mut clickbait_title_ = params.clickbait_title;
+    if params.category_id == 3 {
+        clickbait_title_ = Some(true);
+    }
+
     post_vote_(
         &params.url,
         &params.title,
         None,
         &params.uuid,
         params.category_id,
+        clickbait_title_,
         conn,
         remote_ip,
     )
@@ -98,6 +105,7 @@ fn post_vote_by_content(
         Some(&params.content),
         &params.uuid,
         params.category_id,
+        None,
         conn,
         remote_ip,
     )
@@ -114,6 +122,7 @@ fn post_vote_(
     content: Option<&str>,
     uuid_: &str,
     category_id_: i32,
+    clickbait_title_: Option<bool>,
     conn: DbConn,
     remote_ip: RemoteIp,
 ) -> Cors<Result<Json<Vote>, status::Custom<String>>> {
@@ -125,6 +134,7 @@ fn post_vote_(
             category_id: category_id_,
             uuid: &uuid_,
             ip: &remote_ip.ip,
+            clickbait_title: clickbait_title_,
         };
         diesel::insert(&new_vote).into(votes).get_result(&*conn)
     });
