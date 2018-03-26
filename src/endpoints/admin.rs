@@ -86,6 +86,20 @@ fn verify_link(
 }
 
 #[derive(Deserialize)]
+struct VerifyLinkClickbaitTitleParams {
+    link_id: i32,
+    clickbait_title: Option<bool>,
+}
+#[post("/admin/verify_link_clickbait_title", data = "<params>")]
+fn verify_link_clickbait_title(
+    _user: User,
+    params: Json<VerifyLinkClickbaitTitleParams>,
+    conn: DbConn,
+) -> QueryResult<Json<Link>> {
+    set_verified_clickbait_title(params.link_id, params.clickbait_title, &*conn).map(Json)
+}
+
+#[derive(Deserialize)]
 struct RemoveLinkParams {
     link_id: i32,
 }

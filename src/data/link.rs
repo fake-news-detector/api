@@ -77,3 +77,15 @@ pub fn set_removed(id: i32, removed: bool, conn: &PgConnection) -> QueryResult<L
 
     update(&link).set(dsl::removed.eq(removed)).get_result(conn)
 }
+
+pub fn set_verified_clickbait_title(
+    id: i32,
+    clickbait_title: Option<bool>,
+    conn: &PgConnection,
+) -> QueryResult<Link> {
+    let link = dsl::links.filter(dsl::id.eq(id)).first::<Link>(conn)?;
+
+    update(&link)
+        .set(dsl::verified_clickbait_title.eq(clickbait_title))
+        .get_result(conn)
+}

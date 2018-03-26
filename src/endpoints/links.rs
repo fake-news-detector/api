@@ -17,6 +17,7 @@ struct LinkWithTopVote {
     category_id: i32,
     clickbait_title: Option<bool>,
     verified_category_id: Option<i32>,
+    verified_clickbait_title: Option<bool>,
     count: i64,
 }
 
@@ -30,10 +31,13 @@ fn get_all_links(conn: DbConn) -> QueryResult<Json<Vec<LinkWithTopVote>>> {
          Integer,
          Nullable<Bool>,
          Nullable<Integer>,
+         Nullable<Bool>,
          BigInt),
     >(
         "SELECT links.id, links.url, links.title, links.content,
-            top_votes.category_id, clickbait_votes.clickbait_title, links.verified_category_id, top_votes.total
+            top_votes.category_id, clickbait_votes.clickbait_title,
+            links.verified_category_id, links.verified_clickbait_title,
+            top_votes.total
          FROM links
          INNER JOIN
             (SELECT distinct on (link_id) category_id, link_id, count(category_id) total

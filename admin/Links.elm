@@ -21,6 +21,7 @@ type Msg
     = LoadLinks
     | LinksResponse (WebData (List Link))
     | VerifyLink LinkId CategoryId
+    | VerifyLinkClickbaitTitle LinkId (Maybe Bool)
     | VerifyLinkResponse (WebData ())
     | ShowContent Int
     | RemoveContent LinkId
@@ -52,6 +53,7 @@ type alias Link =
     , categoryId : Int
     , clickbaitTitle : Maybe Bool
     , verifiedCategoryId : Maybe Int
+    , verifiedClickbaitTitle : Maybe Bool
     , count : Int
     }
 
@@ -75,6 +77,7 @@ linksDecoder =
         |> required "category_id" Decode.int
         |> required "clickbait_title" (nullable Decode.bool)
         |> required "verified_category_id" (nullable Decode.int)
+        |> required "verified_clickbait_title" (nullable Decode.bool)
         |> required "count" Decode.int
         |> Decode.list
 
@@ -126,11 +129,16 @@ linksTable model links =
             , Attr.attribute "width" "100%"
             ]
             ([ tr []
-                [ th [] [ Html.text "Title or Content" ]
-                , th [] [ Html.text "Popular Category" ]
-                , th [] [ Html.text "Verified Category" ]
-                , th [] [ Html.text "Popular Is Click Bait" ]
-                , th [] [ Html.text "Delete Content" ]
+                [ th [ Attr.rowspan 2 ] [ Html.text "Title or Content" ]
+                , th [ Attr.colspan 2 ] [ Html.text "Popular" ]
+                , th [ Attr.colspan 2 ] [ Html.text "Verified" ]
+                , th [ Attr.rowspan 2 ] [ Html.text "Delete Content" ]
+                ]
+             , tr []
+                [ th [] [ Html.text "Category" ]
+                , th [] [ Html.text "Clickbait Title" ]
+                , th [] [ Html.text "Category" ]
+                , th [] [ Html.text "Clickbait Title" ]
                 ]
              ]
                 ++ List.map (linkRow model) links
@@ -219,6 +227,43 @@ linkRow model link =
                         ""
                 )
 
+        verifyClickbaitTitleEvent targetValue =
+            let
+                clickbaitTitle =
+                    case targetValue of
+                        "True" ->
+                            Just True
+
+                        "False" ->
+                            Just False
+
+                        _ ->
+                            Nothing
+            in
+            VerifyLinkClickbaitTitle link.id clickbaitTitle
+
+        selectIsClickbait =
+            Html.select
+                [ Attr.style [ ( "width", "100%" ) ]
+                , Events.on "change" (Decode.map verifyClickbaitTitleEvent Events.targetValue)
+                ]
+                ([ Html.option
+                    [ Attr.value ""
+                    , Attr.selected (link.verifiedClickbaitTitle == Nothing)
+                    ]
+                    [ Html.text "" ]
+                 ]
+                    ++ List.map
+                        (\( name, value ) ->
+                            Html.option
+                                [ Attr.value <| toString value
+                                , Attr.selected (link.verifiedClickbaitTitle == Just value)
+                                ]
+                                [ Html.text name ]
+                        )
+                        [ ( "Yes", True ), ( "No", False ) ]
+                )
+
         showContent =
             case ( isLink, link.id ) of
                 ( True, LinkId id ) ->
@@ -244,8 +289,9 @@ linkRow model link =
                 tr []
                     [ td [] [ titleLink, showContent ]
                     , td [] [ popularCategory ]
-                    , td [] [ selectCategory ]
                     , td [] [ popularIsClickbaitTitle ]
+                    , td [] [ selectCategory ]
+                    , td [] [ selectIsClickbait ]
                     , td [] [ deleteButton ]
                     ]
     in
@@ -269,6 +315,15 @@ update msg model =
                     VerifyLinkResponse
                     (Decode.succeed ())
                     (verifyLinkEncoder linkId categoryId)
+                )
+
+        VerifyLinkClickbaitTitle linkId clickbaitTitle ->
+            return { model | verifyLinkResponse = Loading }
+                (RemoteData.Http.post
+                    "/admin/verify_link_clickbait_title"
+                    VerifyLinkResponse
+                    (Decode.succeed ())
+                    (verifyLinkClickbaitTitleEncoder linkId clickbaitTitle)
                 )
 
         VerifyLinkResponse verifyLinkResponse ->
@@ -322,6 +377,21 @@ verifyLinkEncoder (LinkId linkId) categoryId =
 
                 CategoryId categoryId ->
                     Encode.int categoryId
+          )
+        ]
+
+
+verifyLinkClickbaitTitleEncoder : LinkId -> Maybe Bool -> Encode.Value
+verifyLinkClickbaitTitleEncoder (LinkId linkId) clickbaitTitle =
+    Encode.object
+        [ ( "link_id", Encode.int linkId )
+        , ( "clickbait_title"
+          , case clickbaitTitle of
+                Nothing ->
+                    Encode.null
+
+                Just bool ->
+                    Encode.bool bool
           )
         ]
 
