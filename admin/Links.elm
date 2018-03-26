@@ -44,6 +44,7 @@ type alias Link =
     , title : Maybe String
     , content : Maybe String
     , categoryId : Int
+    , clickbaitTitle : Maybe Bool
     , verifiedCategoryId : Maybe Int
     , count : Int
     }
@@ -62,6 +63,7 @@ linksDecoder =
         |> required "title" (nullable Decode.string)
         |> required "content" (nullable Decode.string)
         |> required "category_id" Decode.int
+        |> required "clickbait_title" (nullable Decode.bool)
         |> required "verified_category_id" (nullable Decode.int)
         |> required "count" Decode.int
         |> Decode.list
@@ -117,6 +119,7 @@ linksTable links =
                 [ th [] [ Html.text "Title or Content" ]
                 , th [] [ Html.text "Popular Category" ]
                 , th [] [ Html.text "Verified Category" ]
+                , th [] [ Html.text "Popular Is Click Bait" ]
                 ]
              ]
                 ++ List.map linkRow links
@@ -126,18 +129,33 @@ linksTable links =
 linkRow : Link -> Html.Html Msg
 linkRow link =
     let
+        isLink =
+            String.contains "http" (Maybe.withDefault "" link.url)
+
+        titleText =
+            if isLink then
+                Maybe.withDefault "" link.title
+            else
+                Maybe.withDefault "" link.content
+
+        titleOrPlaceholderText =
+            if String.isEmpty titleText then
+                "No title"
+            else
+                titleText
+
         titleLink =
-            if String.contains "http" (Maybe.withDefault "" link.url) then
+            if isLink then
                 Html.a
                     [ Attr.href (Maybe.withDefault "" link.url)
                     , Attr.target "_blank"
                     ]
-                    [ Html.text <| Maybe.withDefault "" link.title ]
+                    [ Html.text titleOrPlaceholderText ]
             else
                 Html.div
                     [ Attr.style [ ( "max-height", "50px" ), ( "overflow-y", "scroll" ) ]
                     ]
-                    [ Html.text <| Maybe.withDefault "" link.content ]
+                    [ Html.text titleOrPlaceholderText ]
 
         category =
             Category.fromId link.categoryId
@@ -176,11 +194,25 @@ linkRow link =
                         )
                         (List.range 1 6)
                 )
+
+        popularIsClickbaitTitle =
+            Html.text
+                (case link.clickbaitTitle of
+                    Just True ->
+                        "Yes"
+
+                    Just False ->
+                        "No"
+
+                    Nothing ->
+                        ""
+                )
     in
     tr []
         [ td [] [ titleLink ]
         , td [] [ popularCategory ]
         , td [] [ selectCategory ]
+        , td [] [ popularIsClickbaitTitle ]
         ]
 
 

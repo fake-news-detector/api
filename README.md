@@ -33,7 +33,8 @@ Response format:
   url: string,
   title: string,
   content: null | string,
-  category_id: int,
+  category_id: bool,
+  clickbait_title: null | bool,
   verified_category_id: null | string,
   count: int
 }]
