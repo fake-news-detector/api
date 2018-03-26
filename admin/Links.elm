@@ -13,6 +13,7 @@ import Login exposing (User)
 import RemoteData exposing (..)
 import RemoteData.Http exposing (..)
 import Return exposing (..)
+import Set
 import Stylesheet exposing (..)
 
 
@@ -21,11 +22,13 @@ type Msg
     | LinksResponse (WebData (List Link))
     | VerifyLink LinkId CategoryId
     | VerifyLinkResponse (WebData ())
+    | ShowContent Int
 
 
 type alias Model =
     { linksResponse : WebData (List Link)
     , verifyLinkResponse : WebData ()
+    , showContent : Set.Set Int
     }
 
 
@@ -52,7 +55,7 @@ type alias Link =
 
 init : Model
 init =
-    { linksResponse = NotAsked, verifyLinkResponse = NotAsked }
+    { linksResponse = NotAsked, verifyLinkResponse = NotAsked, showContent = Set.empty }
 
 
 linksDecoder : Decoder (List Link)
@@ -97,7 +100,7 @@ view user model =
                 text "Loading..."
 
             Success links ->
-                linksTable links
+                linksTable model links
 
             Failure _ ->
                 text "Error"
@@ -107,8 +110,8 @@ view user model =
         ]
 
 
-linksTable : List Link -> Element Styles variation Msg
-linksTable links =
+linksTable : Model -> List Link -> Element Styles variation Msg
+linksTable model links =
     html <|
         Html.table
             [ Attr.attribute "border" "1"
@@ -122,12 +125,12 @@ linksTable links =
                 , th [] [ Html.text "Popular Is Click Bait" ]
                 ]
              ]
-                ++ List.map linkRow links
+                ++ List.map (linkRow model) links
             )
 
 
-linkRow : Link -> Html.Html Msg
-linkRow link =
+linkRow : Model -> Link -> Html.Html Msg
+linkRow model link =
     let
         isLink =
             String.contains "http" (Maybe.withDefault "" link.url)
@@ -207,9 +210,24 @@ linkRow link =
                     Nothing ->
                         ""
                 )
+
+        showContent =
+            case ( isLink, link.id ) of
+                ( True, LinkId id ) ->
+                    Html.span []
+                        [ Html.text " "
+                        , Html.button [ Events.onClick (ShowContent id) ] [ Html.text "Show/Hide content" ]
+                        , if Set.member id model.showContent then
+                            Html.text <| Maybe.withDefault "" link.content
+                          else
+                            Html.text ""
+                        ]
+
+                _ ->
+                    Html.text ""
     in
     tr []
-        [ td [] [ titleLink ]
+        [ td [] [ titleLink, showContent ]
         , td [] [ popularCategory ]
         , td [] [ selectCategory ]
         , td [] [ popularIsClickbaitTitle ]
@@ -237,6 +255,17 @@ update msg model =
 
         VerifyLinkResponse verifyLinkResponse ->
             return { model | verifyLinkResponse = verifyLinkResponse } Cmd.none
+
+        ShowContent id ->
+            return
+                { model
+                    | showContent =
+                        if Set.member id model.showContent then
+                            Set.remove id model.showContent
+                        else
+                            Set.insert id model.showContent
+                }
+                Cmd.none
 
 
 verifyLinkEncoder : LinkId -> CategoryId -> Encode.Value
