@@ -14,6 +14,8 @@ table! {
         title -> Text,
         content -> Nullable<Text>,
         verified_category_id -> Nullable<Integer>,
+        verified_clickbait_title -> Nullable<Bool>,
+        removed -> Bool,
     }
 }
 

@@ -84,3 +84,16 @@ fn verify_link(
 ) -> QueryResult<Json<Link>> {
     set_verified_category_id(params.link_id, params.category_id, &*conn).map(Json)
 }
+
+#[derive(Deserialize)]
+struct RemoveLinkParams {
+    link_id: i32,
+}
+#[delete("/admin/remove_link", data = "<params>")]
+fn remove_link(
+    _user: User,
+    params: Json<RemoveLinkParams>,
+    conn: DbConn,
+) -> QueryResult<Json<Link>> {
+    set_removed(params.link_id, true, &*conn).map(Json)
+}

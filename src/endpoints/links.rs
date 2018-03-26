@@ -52,6 +52,7 @@ fn get_all_links(conn: DbConn) -> QueryResult<Json<Vec<LinkWithTopVote>>> {
             FROM votes WHERE clickbait_title IS NOT NULL
             GROUP BY link_id) AS clickbait_votes
          ON clickbait_votes.link_id = links.id
+         WHERE links.removed = FALSE
          ORDER BY links.id DESC",
     );
     query.load::<LinkWithTopVote>(&*conn).map(Json)

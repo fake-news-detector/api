@@ -23,12 +23,15 @@ type Msg
     | VerifyLink LinkId CategoryId
     | VerifyLinkResponse (WebData ())
     | ShowContent Int
+    | RemoveContent LinkId
+    | RemoveLinkResponse LinkId (WebData String)
 
 
 type alias Model =
     { linksResponse : WebData (List Link)
     , verifyLinkResponse : WebData ()
     , showContent : Set.Set Int
+    , removedLinks : Set.Set Int
     }
 
 
@@ -55,7 +58,11 @@ type alias Link =
 
 init : Model
 init =
-    { linksResponse = NotAsked, verifyLinkResponse = NotAsked, showContent = Set.empty }
+    { linksResponse = NotAsked
+    , verifyLinkResponse = NotAsked
+    , showContent = Set.empty
+    , removedLinks = Set.empty
+    }
 
 
 linksDecoder : Decoder (List Link)
@@ -123,6 +130,7 @@ linksTable model links =
                 , th [] [ Html.text "Popular Category" ]
                 , th [] [ Html.text "Verified Category" ]
                 , th [] [ Html.text "Popular Is Click Bait" ]
+                , th [] [ Html.text "Delete Content" ]
                 ]
              ]
                 ++ List.map (linkRow model) links
@@ -225,13 +233,23 @@ linkRow model link =
 
                 _ ->
                     Html.text ""
+
+        deleteButton =
+            Html.button [ Events.onClick (RemoveContent link.id) ] [ Html.text "Delete" ]
+
+        hideIfRemoved (LinkId id) =
+            if Set.member id model.removedLinks then
+                Html.text ""
+            else
+                tr []
+                    [ td [] [ titleLink, showContent ]
+                    , td [] [ popularCategory ]
+                    , td [] [ selectCategory ]
+                    , td [] [ popularIsClickbaitTitle ]
+                    , td [] [ deleteButton ]
+                    ]
     in
-    tr []
-        [ td [] [ titleLink, showContent ]
-        , td [] [ popularCategory ]
-        , td [] [ selectCategory ]
-        , td [] [ popularIsClickbaitTitle ]
-        ]
+    hideIfRemoved link.id
 
 
 update : Msg -> Model -> Return Msg Model
@@ -267,6 +285,31 @@ update msg model =
                 }
                 Cmd.none
 
+        RemoveContent linkId ->
+            return { model | verifyLinkResponse = Loading }
+                (RemoteData.Http.delete
+                    "/admin/remove_link"
+                    (RemoveLinkResponse linkId)
+                    (removeLinkEncoder linkId)
+                )
+
+        RemoveLinkResponse (LinkId id) response ->
+            let
+                removedLinks =
+                    case response of
+                        Success _ ->
+                            Set.insert id model.removedLinks
+
+                        _ ->
+                            model.removedLinks
+            in
+            return
+                { model
+                    | removedLinks = removedLinks
+                    , verifyLinkResponse = RemoteData.map (always ()) response
+                }
+                Cmd.none
+
 
 verifyLinkEncoder : LinkId -> CategoryId -> Encode.Value
 verifyLinkEncoder (LinkId linkId) categoryId =
@@ -280,4 +323,11 @@ verifyLinkEncoder (LinkId linkId) categoryId =
                 CategoryId categoryId ->
                     Encode.int categoryId
           )
+        ]
+
+
+removeLinkEncoder : LinkId -> Encode.Value
+removeLinkEncoder (LinkId id) =
+    Encode.object
+        [ ( "link_id", Encode.int id )
         ]

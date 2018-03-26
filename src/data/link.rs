@@ -15,6 +15,8 @@ pub struct Link {
     pub title: String,
     pub content: Option<String>,
     pub verified_category_id: Option<i32>,
+    pub verified_clickbait_title: Option<bool>,
+    pub removed: bool,
 }
 
 #[derive(Insertable)]
@@ -68,4 +70,10 @@ pub fn set_verified_category_id(
 
 pub fn hash_from_content(content: &str) -> String {
     format!("{:x}", md5::compute(&content))
+}
+
+pub fn set_removed(id: i32, removed: bool, conn: &PgConnection) -> QueryResult<Link> {
+    let link = dsl::links.filter(dsl::id.eq(id)).first::<Link>(conn)?;
+
+    update(&link).set(dsl::removed.eq(removed)).get_result(conn)
 }

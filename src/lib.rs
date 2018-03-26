@@ -53,6 +53,7 @@ pub fn start_server() {
                 endpoints::admin::get_login,
                 endpoints::admin::logout,
                 endpoints::admin::verify_link,
+                endpoints::admin::remove_link,
                 static_files,
             ],
         )
