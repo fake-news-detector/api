@@ -99,7 +99,7 @@ pub fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
     prediction_url.query_pairs_mut().append_pair("title", title);
     prediction_url.query_pairs_mut().append_pair(
         "content",
-        content,
+        &content[..7000],
     );
 
     reqwest::get(prediction_url)
