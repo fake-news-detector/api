@@ -57,13 +57,14 @@ Response format:
 ```
 {
   domain: null | { category_id: int },
-  content: {
-    robot: [{ category_id: int, chance: float }],
-    people: [{ category_id: int, votes: int }]
+  robot: {
+    fake_news: float,
+    extremely_biased: float,
+    clickbait: float
   },
-  title: {
-    robot: { clickbait: bool, chance: float },
-    people: { clickbait: bool, votes: int },
+  people: {
+    content: [{ category_id: int, count: int }],
+    title: { clickbait: bool, count: int },
   },
   keywords: [ string ]
 }

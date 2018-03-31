@@ -32,44 +32,50 @@ pub struct NewVote<'a> {
 }
 
 #[derive(Queryable, Serialize, Deserialize)]
-pub struct PeopleContentVote {
-    pub category_id: i32,
-    pub count: i64,
+struct PeopleContentVote {
+    category_id: i32,
+    count: i64,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct RobotContentVote {
-    pub category_id: i32,
-    pub chance: f32,
+struct RobotContentVote {
+    category_id: i32,
+    chance: f32,
 }
 
 #[derive(Queryable, Serialize, Deserialize)]
-pub struct PeopleTitleVote {
-    pub clickbait: bool,
-    pub count: i64,
+struct PeopleTitleVote {
+    clickbait: bool,
+    count: i64,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct RobotTitleVote {
-    pub clickbait: bool,
-    pub chance: f32,
+struct RobotTitleVote {
+    clickbait: bool,
+    chance: f32,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct VerifiedVote {
-    pub category_id: i32,
+struct VerifiedVote {
+    category_id: i32,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct ContentVotes {
-    pub robot: Vec<RobotContentVote>,
-    pub people: Vec<PeopleContentVote>,
+struct ContentVotes {
+    robot: Vec<RobotContentVote>,
+    people: Vec<PeopleContentVote>,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct TitleVotes {
-    pub robot: RobotTitleVote,
-    pub people: PeopleTitleVote,
+struct TitleVotes {
+    robot: RobotTitleVote,
+    people: PeopleTitleVote,
+}
+
+#[derive(Serialize, Deserialize)]
+struct PeopleVotes {
+    content: Vec<PeopleContentVote>,
+    title: PeopleTitleVote,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -77,23 +83,25 @@ pub struct AllVotes {
     domain: Option<VerifiedVote>,
     content: ContentVotes,
     title: TitleVotes,
+    robot: RobinhoPredictions,
+    people: PeopleVotes,
     keywords: Vec<String>,
 }
 
-#[derive(Deserialize)]
-pub struct RobinhoPredictions {
+#[derive(Serialize, Deserialize)]
+struct RobinhoPredictions {
     fake_news: f32,
     extremely_biased: f32,
     clickbait: f32,
 }
 
 #[derive(Deserialize)]
-pub struct RobinhoResponse {
-    pub predictions: RobinhoPredictions,
-    pub keywords: Vec<String>,
+struct RobinhoResponse {
+    predictions: RobinhoPredictions,
+    keywords: Vec<String>,
 }
 
-pub fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
+fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
     let mut prediction_url = reqwest::Url::parse("https://robinho.fakenewsdetector.org/predict")
         .unwrap();
     prediction_url.query_pairs_mut().append_pair("title", title);
@@ -114,7 +122,7 @@ pub fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
         })
 }
 
-pub fn get_people_votes(url: &str, conn: &PgConnection) -> QueryResult<Vec<PeopleContentVote>> {
+fn get_people_votes(url: &str, conn: &PgConnection) -> QueryResult<Vec<PeopleContentVote>> {
     let link: Result<Link, diesel::result::Error> = dsl::links.filter(dsl::url.eq(url)).first(conn);
 
     match link {
@@ -131,7 +139,7 @@ pub fn get_people_votes(url: &str, conn: &PgConnection) -> QueryResult<Vec<Peopl
     }
 }
 
-pub fn get_people_clickbait_votes(url: &str, conn: &PgConnection) -> QueryResult<PeopleTitleVote> {
+fn get_people_clickbait_votes(url: &str, conn: &PgConnection) -> QueryResult<PeopleTitleVote> {
     let link: Result<Link, diesel::result::Error> = dsl::links.filter(dsl::url.eq(url)).first(conn);
 
     match link {
@@ -157,7 +165,7 @@ pub fn get_people_clickbait_votes(url: &str, conn: &PgConnection) -> QueryResult
     }
 }
 
-pub fn get_domain_category(url: &str) -> Option<VerifiedVote> {
+fn get_domain_category(url: &str) -> Option<VerifiedVote> {
     verified_domains::get_category(&url).map(|cid| VerifiedVote { category_id: cid })
 }
 
@@ -175,8 +183,10 @@ pub fn get_all_votes(
     let robinho_response = get_robinho_prediction(&title, &content_);
     let robinho_votes = robinho_response.predictions;
     let keywords = robinho_response.keywords;
-    let people_votes = get_people_votes(&url, &*conn)?;
+    let people_content_votes = get_people_votes(&url, &*conn)?;
+    let people_content_votes_clone = get_people_votes(&url, &*conn)?;
     let people_clickbait_votes = get_people_clickbait_votes(&url, &*conn)?;
+    let people_clickbait_votes_clone = get_people_clickbait_votes(&url, &*conn)?;
 
     let robinho_votes_to_vec = vec![
         RobotContentVote {
@@ -193,7 +203,7 @@ pub fn get_all_votes(
         domain: domain,
         content: ContentVotes {
             robot: robinho_votes_to_vec,
-            people: people_votes,
+            people: people_content_votes,
         },
         title: TitleVotes {
             robot: RobotTitleVote {
@@ -201,6 +211,11 @@ pub fn get_all_votes(
                 chance: robinho_votes.clickbait,
             },
             people: people_clickbait_votes,
+        },
+        robot: robinho_votes,
+        people: PeopleVotes {
+            content: people_content_votes_clone,
+            title: people_clickbait_votes_clone,
         },
         keywords: keywords,
     })
