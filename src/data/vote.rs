@@ -81,8 +81,15 @@ pub struct AllVotes {
 }
 
 #[derive(Deserialize)]
+pub struct RobinhoPredictions {
+    fake_news: f32,
+    extremely_biased: f32,
+    clickbait: f32,
+}
+
+#[derive(Deserialize)]
 pub struct RobinhoResponse {
-    pub predictions: Vec<RobotContentVote>,
+    pub predictions: RobinhoPredictions,
     pub keywords: Vec<String>,
 }
 
@@ -98,7 +105,11 @@ pub fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
     reqwest::get(prediction_url)
         .and_then(|mut r| r.json())
         .unwrap_or(RobinhoResponse {
-            predictions: Vec::new(),
+            predictions: RobinhoPredictions {
+                fake_news: 0.0,
+                extremely_biased: 0.0,
+                clickbait: 0.0,
+            },
             keywords: Vec::new(),
         })
 }
@@ -167,16 +178,27 @@ pub fn get_all_votes(
     let people_votes = get_people_votes(&url, &*conn)?;
     let people_clickbait_votes = get_people_clickbait_votes(&url, &*conn)?;
 
+    let robinho_votes_to_vec = vec![
+        RobotContentVote {
+            category_id: 2,
+            chance: robinho_votes.fake_news,
+        },
+        RobotContentVote {
+            category_id: 4,
+            chance: robinho_votes.extremely_biased,
+        },
+    ];
+
     Ok(AllVotes {
         domain: domain,
         content: ContentVotes {
-            robot: robinho_votes,
+            robot: robinho_votes_to_vec,
             people: people_votes,
         },
         title: TitleVotes {
             robot: RobotTitleVote {
-                clickbait: false,
-                chance: 0.0,
+                clickbait: robinho_votes.clickbait > 0.5,
+                chance: robinho_votes.clickbait,
             },
             people: people_clickbait_votes,
         },
