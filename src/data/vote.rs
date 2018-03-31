@@ -130,7 +130,7 @@ fn get_people_votes(url: &str, conn: &PgConnection) -> QueryResult<Vec<PeopleCon
         Ok(link) => {
             let query = sql::<(Integer, BigInt)>(&format!(
                 "SELECT category_id, count(*) FROM \
-                 votes WHERE link_id = {} GROUP BY \
+                 votes WHERE link_id = {} AND category_id <> 3 GROUP BY \
                  category_id",
                 link.id
             ));
