@@ -104,10 +104,11 @@ struct RobinhoResponse {
 fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
     let mut prediction_url = reqwest::Url::parse("https://robinho.fakenewsdetector.org/predict")
         .unwrap();
+    let limited_content: String = content.chars().take(7000).collect();
     prediction_url.query_pairs_mut().append_pair("title", title);
     prediction_url.query_pairs_mut().append_pair(
         "content",
-        &content[..7000],
+        &*limited_content,
     );
 
     reqwest::get(prediction_url)
