@@ -101,7 +101,7 @@ struct RobinhoResponse {
     keywords: Vec<String>,
 }
 
-fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
+fn get_robinho_prediction(title: &str, content: &str, url: &str) -> RobinhoResponse {
     let mut prediction_url = reqwest::Url::parse("https://robinho.fakenewsdetector.org/predict")
         .unwrap();
     let limited_content: String = content.chars().take(7000).collect();
@@ -110,6 +110,7 @@ fn get_robinho_prediction(title: &str, content: &str) -> RobinhoResponse {
         "content",
         &*limited_content,
     );
+    prediction_url.query_pairs_mut().append_pair("url", url);
 
     reqwest::get(prediction_url)
         .and_then(|mut r| r.json())
@@ -181,7 +182,7 @@ pub fn get_all_votes(
         Some(text) => String::from(text),
         None => scrapper::extract_text(&url).unwrap_or(String::from("")),
     };
-    let robinho_response = get_robinho_prediction(&title, &content_);
+    let robinho_response = get_robinho_prediction(&title, &content_, &url);
     let robinho_votes = robinho_response.predictions;
     let keywords = robinho_response.keywords;
     let people_content_votes = get_people_votes(&url, &*conn)?;
