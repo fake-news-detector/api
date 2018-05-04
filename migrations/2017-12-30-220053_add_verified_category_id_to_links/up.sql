@@ -1,1 +1,0 @@
-ALTER TABLE links ADD COLUMN verified_category_id INTEGER REFERENCES categories(id)
